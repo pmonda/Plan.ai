@@ -1,9 +1,14 @@
 import { useState } from 'react';
 import './Login.css'
 
-function checkPassword(password) {
-  if (password === "test") {
-    console.log("Login successful");
+const logins = {
+  'admin': 'test',
+  'pmonda': 'password'
+};
+
+function checkPassword(username, password) {
+  if(logins[username] === password) {
+    console.log(username + ' logged in');
   }
     
 }
@@ -12,12 +17,12 @@ export default function Login() {
   const [password, setPassword] = useState('');
   return (
   <div>
-    Login
+    <h1>Login</h1>
     <br/>
     <input id="user" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="username"></input>
     <br/>
-    <input id="pwd" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="password"></input>
+    <input id="pwd" type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="password"></input>
     <br/>
-    <button onClick={checkPassword(password)}>Login</button>
+    <button onClick={checkPassword(username, password)}>Login</button>
   </div>);
 }
