@@ -20,10 +20,11 @@ jobs:
     steps:
       # Check out the repository
       - uses: actions/checkout@v4
-      - name: Change Directory
-        run: cd ../dev/front/plan.io
       - name: Path
         run: echo $PATH
+      - name: Change Directory
+        run: cd ../dev/front/plan.io
+      
       # Set up Node.js environment and cache npm dependencies
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
