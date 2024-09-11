@@ -22,13 +22,12 @@ Plan.IO is a cutting-edge productivity tool specifically designed to assist **Pu
 - **Python 3.9+**
 - **Node.js** (for frontend)
 - **Git**
-- [Other relevant software or dependencies]
 
 ### Installation
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/yourusername/plan.io.git
+   git clone https://github.com/pmonda/plan.io.git
 
 2. **Navigate to the project directory:**
    ```bash
