@@ -22,7 +22,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Path
         run: echo $PATH
-      - name: pwd
+      - name: PWD
         run: echo pwd
       - name: Change Directory
         run: cd ../dev/front/plan.io
