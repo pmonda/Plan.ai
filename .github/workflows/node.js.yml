@@ -8,12 +8,7 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
-    defaults:
-      run: 
-        shell: bash
-        working-directory: plan.io/dev/front/plan.io
 
     strategy:
       matrix:
@@ -22,7 +17,8 @@ jobs:
     steps:
       # Check out the repository
       - uses: actions/checkout@v4
-
+      - name: Change Directory
+        run: cd dev/front/plan.io
       # Set up Node.js environment and cache npm dependencies
       - name: Set up Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
@@ -33,8 +29,7 @@ jobs:
       # Install dependencies
       - name: Install Dependencies
         run: npm ci
-      - name: Change Directory
-        run: cd dev/front/plan.io
+      
       # Build the project (if applicable)
       - name: Build Project
         run: npm run build --if-present
