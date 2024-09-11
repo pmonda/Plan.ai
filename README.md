@@ -1,6 +1,6 @@
 # 🚀 Plan.IO - Your Personalized Academic Planner for Coding Assignments
 
-![Plan.IO Banner](C:\Users\kpedd\Documents\GitHub\plan.io\assets\logo_banner.png)
+![Plan.IO Banner](assets\logo_banner.png)
 
 Plan.IO is a cutting-edge productivity tool specifically designed to assist **Purdue University students** in effectively managing their academic workload. With a special focus on coding assignments, Plan.IO breaks down complex tasks, provides personalized time estimates, and helps students stay on track while balancing their academic and extracurricular responsibilities.
 
