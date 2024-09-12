@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/pmonda/plan.io#readme",
   "dependencies": {
-    "create-react-app": "^5.0.1"
+    "create-react-app": "^5.0.1",
+    "plan.io": "file:"
   }
 }
