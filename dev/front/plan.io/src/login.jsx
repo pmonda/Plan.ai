@@ -17,6 +17,16 @@ function checkPassword(username, password) {
   }
 }
 
+function registered(username) {
+  if (logins.hasOwnProperty(username)) { 
+    alert(username + ' is already registered');
+  } else {
+    let password = prompt("please set a password");
+    logins[username] = password;
+  }
+}
+
+
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -26,7 +36,7 @@ export default function Login() {
   };
   
   const handleRegister = () => {
-    
+    registered(username, password);
   };
 
   return (
