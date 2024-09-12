@@ -61,7 +61,7 @@ export default function Login() {
       <br/>
       <button onClick={handleLogin}>Login</button>
       <br/>
-      <br/>
+      <p>Don't have an account?</p>
       <button onClick={handleRegister}>Register</button>
     </div>
   );
