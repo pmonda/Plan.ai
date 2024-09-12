@@ -20,10 +20,8 @@ jobs:
     steps:
       # Check out the repository
       - uses: actions/checkout@v4
-      - name: Path
-        run: echo $PATH
       - name: PWD
-        run: echo pwd
+        run:  pwd
       - name: Change Directory
         run: cd ../dev/front/plan.io
       
