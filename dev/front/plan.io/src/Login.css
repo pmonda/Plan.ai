@@ -1,0 +1,66 @@
+body {
+    /* fallback for old browsers */
+    background: #6a11cb;
+  
+    /* Chrome 10-25, Safari 5.1-6 */
+    background: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+  
+    /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+    background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+    
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  h1 {
+    color: white;
+    font-family: 'Arial', sans-serif;
+    text-shadow: 1px 1px 2px black;
+  }
+  
+  .login-container {
+    background-color: rgba(255, 255, 255, 0.1);
+    padding: 20px;
+    border-radius: 8px;
+    width: 300px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+  }
+  
+  input {
+    width: 90%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 10px;
+  }
+  
+  button {
+    width: 100%;
+    padding: 10px;
+    background-color: #37a2ff;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  button:hover {
+    background-color: #1e8df5;
+  }
+  
+  img.logo {
+    width: 300px;
+    height: 300px;
+    margin-bottom: -100px;
+  }
+  
+  p {
+    color: white;
+    font-family: 'Arial', sans-serif;
+    text-shadow: 1px 1px 2px black;
+  }
+  
