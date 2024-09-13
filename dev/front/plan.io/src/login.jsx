@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import bannerlogo from '../src/assets/Plan.IO__1_-removebg-preview.png';
 
@@ -10,11 +11,7 @@ const logins = {
 };
 
 function checkPassword(username, password) {
-  if (logins[username] === password) {
-    console.log(username + ' logged in');
-  } else {
-    console.log('Incorrect login');
-  }
+  return logins[username] === password;
 }
 
 function registered(username) {
@@ -26,17 +23,23 @@ function registered(username) {
   }
 }
 
-
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const navigate = useNavigate(); // Initialize useNavigate
 
   const handleLogin = () => {
-    checkPassword(username, password);
+    if (checkPassword(username, password)) {
+      console.log(username + ' logged in');
+      navigate('/dashboard'); // Redirect to the dashboard page
+    } else {
+      console.log('Incorrect login');
+      alert('Incorrect username or password');
+    }
   };
   
   const handleRegister = () => {
-    registered(username, password);
+    registered(username);
   };
 
   return (
