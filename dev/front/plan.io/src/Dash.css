@@ -1,84 +1,185 @@
-/* Dash.css */
-
 body {
-    margin: 0;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    background-color: #f5f5f5;
-  }
-  
-  .dashboard-container {
-    display: flex;
-    flex-direction: column;
-    height: 100vh;
-  }
-  
-  .dashboard-header {
-    background-color: #007bff;
-    color: white;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  }
-  
-  .dashboard-nav {
-    background-color: #ffffff;
-    padding: 10px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-  }
-  
-  .dashboard-nav ul {
-    list-style-type: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-  }
-  
-  .dashboard-nav ul li {
-    margin: 0 15px;
-  }
-  
-  .dashboard-nav ul li a {
-    color: #007bff;
-    text-decoration: none;
-    font-weight: 600;
-    transition: color 0.3s;
-  }
-  
-  .dashboard-nav ul li a:hover {
-    color: #0056b3;
-  }
-  
-  .dashboard-main {
-    flex: 1;
-    padding: 20px;
-  }
-  
-  .dashboard-section {
-    background-color: white;
-    border-radius: 8px;
-    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-    margin-bottom: 20px;
-  }
-  
-  .dashboard-section h2 {
-    margin-top: 0;
-    color: #333;
-  }
-  
-  .dashboard-section p {
-    color: #555;
-  }
-  
-  @media (max-width: 768px) {
-    .dashboard-nav ul {
-      flex-direction: column;
-      align-items: center;
-    }
-  
-    .dashboard-nav ul li {
-      margin: 10px 0;
-    }
-  }
-  
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: -webkit-linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+}
+
+.dashboard-container {
+  display: flex;
+  height: 100vh;
+}
+
+.dashboard-sidebar {
+  background-color: #000000;
+  color: white;
+  width: 200px;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  left: 0; /* Positioning the sidebar on the left */
+  top: 0;
+  height: 100%; /* Full height of the window */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between; /* Space between menu and upload section */
+}
+
+.dashboard-sidebar h3 {
+  margin-top: 0;
+  text-align: center;
+  box-shadow: 2px 0 5px rgba(255, 255, 255, 0.0);
+
+}
+
+.dashboard-sidebar ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+.dashboard-sidebar ul li {
+  margin-bottom: 15px;
+}
+
+.dashboard-sidebar ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.dashboard-sidebar ul li a:hover {
+  text-decoration: underline;
+}
+.dashboard-header {
+  background-color: #007bff;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  width: calc(100% - 240px); /* Full width minus the sidebar */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+  margin: 0; /* Remove any default margin */
+  position: fixed; /* Fix the header at the top */
+  top: 0;
+  left: 240px; /* Adjust for sidebar width */
+  z-index: 1; /* Ensure the header stays above other content */
+}
+
+.dashboard-content {
+  flex: 1;
+  padding: 20px;
+  margin-left: 240px; /* Adjust for sidebar width */
+  margin-top: 80px; /* Push the content down so it's below the header */
+}
+
+
+.motivational-quote {
+  font-style: italic;
+  margin-top: 10px;
+}
+
+.dashboard-section {
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  margin-bottom: 20px;
+}
+
+.dashboard-section h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.charts {
+  display: flex;
+  justify-content: space-between;
+}
+
+.chart-placeholder {
+  background-color: #e0e0e0;
+  height: 200px;
+  width: 48%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  font-size: 18px;
+}
+
+.task-list input[type="text"] {
+  padding: 8px;
+  margin-right: 10px;
+}
+
+.task-list ul {
+  list-style-type: none;
+  padding: 0;
+  margin-top: 10px;
+}
+/* Align checkbox and task text to the left */
+.task-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+  justify-content: left; /* Align items to the left */
+}
+
+/* Apply styles for task text */
+.task-list li .task-text {
+  flex: 1; /* Allow text to take up remaining space */
+}
+
+/* Apply styles for completed tasks */
+.task-list li.completed-task .task-text {
+  text-decoration: line-through;
+  color: #999;
+}
+
+/* Ensure the delete button is not affected by the strikethrough */
+.task-list li button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none; /* Remove underline or strikethrough */
+}
+
+.task-list li button:hover {
+  background-color: #cc0000;
+}
+
+/* Sidebar PDF Upload Section */
+.upload-section {
+  margin-top: auto; /* Push it to the bottom */
+  text-align: center;
+}
+
+.upload-btn {
+  padding: 10px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.upload-btn:hover {
+  background-color: #e60000;
+}
+
+.current-streak {
+  text-align: center;
+}
+
+.current-streak .streak-number {
+  font-size: 48px;
+  font-weight: bold;
+  color: #333;
+}
+
+.current-streak .streak-label {
+  font-size: 18px;
+  color: #666;
+}
