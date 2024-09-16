@@ -29,6 +29,7 @@ const quotesDB = [
   { quote: "Failure will never overtake me if my determination to succeed is strong enough.", author: "Og Mandino" }
 ];
 
+
 export default function Dashboard() {
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
@@ -38,7 +39,12 @@ export default function Dashboard() {
 
   const fileInputRef = useRef(null);
 
-  // Handle task creation
+  const getDayOfWeek = () => {
+    const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const currentDay = new Date().getDay();
+    return daysOfWeek[currentDay];
+  };
+
   const handleAddTask = () => {
     if (newTask.trim()) {
       setTasks([...tasks, { task: newTask, completed: false }]);
@@ -46,20 +52,21 @@ export default function Dashboard() {
     }
   };
 
-  // Handle task completion toggle
+  useEffect(() => {
+    document.title = 'Plan.io- Dashboard'; 
+  }, []);
+
   const handleTaskToggle = (index) => {
     const updatedTasks = [...tasks];
     updatedTasks[index].completed = !updatedTasks[index].completed;
     setTasks(updatedTasks);
   };
 
-  // Handle task deletion
   const handleDeleteTask = (index) => {
     const updatedTasks = tasks.filter((_, i) => i !== index);
     setTasks(updatedTasks);
   };
 
-  // Handle PDF upload
   const handleUploadClick = () => {
     fileInputRef.current.click();
   };
@@ -72,7 +79,6 @@ export default function Dashboard() {
     }
   };
 
-  // Fetch a random motivational quote (simulated fetching from "database")
   useEffect(() => {
     const randomQuote = quotesDB[Math.floor(Math.random() * quotesDB.length)];
     setQuote(randomQuote.quote);
@@ -83,7 +89,13 @@ export default function Dashboard() {
     <div className="dashboard-container">
       {/* Sidebar */}
       <aside className="dashboard-sidebar">
-        <h3>Plan.io</h3>
+        <h3>&lt;Plan.io&gt;</h3>
+        <p>
+          Hello, <strong>{username}</strong>! <br /><br />Let's make this {getDayOfWeek()} productive.
+        </p>
+        <p className="motivational-quote">
+          "{quote}" <br />– {author}
+        </p>
         <div className="upload-section">
           <button className="upload-button" onClick={handleUploadClick}>Upload PDF</button>
           <input
@@ -105,38 +117,26 @@ export default function Dashboard() {
 
       {/* Main content */}
       <div className="dashboard-content">
-        {/* Header */}
-        <header className="dashboard-header">
-          <h1>Welcome to Plan.io</h1>
-          <p>
-            Hello, <strong>{username}</strong>! Let's make today productive.
-          </p>
-          <p className="motivational-quote">
-            "{quote}" – {author}
-          </p>
-        </header>
+        {/* Dashboard sections */}
+        <div className="dashboard-sections">
+          {/* Current Streak */}
+          <section className="dashboard-section current-streak-section">
+            <h2>Current Streak</h2>
+            <div className="current-streak">
+              <div className="streak-number">45</div> {/* Example number, replace with dynamic value */}
+              <div className="streak-label">days</div>
+            </div>
+          </section>
 
-        {/* Recent Study Sessions - Placeholder for Charts */}
-        <br></br>
-        <br></br>
-        <br></br>
-        <br></br>
-        <br></br>
-        <section className="dashboard-section">
-          <h2>Current Streak</h2>
-          <div className="current-streak">
-            <div className="streak-number">45</div> {/* Example number, replace with dynamic value */}
-            <div className="streak-label">days</div>
-          </div>
-        </section>
-        <section className="dashboard-section">
-          <h2>Recent Study Sessions</h2>
-          <div className="charts">
-            {/* Placeholder for charts and graphs */}
-            <div className="chart-placeholder">Chart 1</div>
-            <div className="chart-placeholder">Chart 2</div>
-          </div>
-        </section>
+          {/* Recent Study Sessions */}
+          <section className="dashboard-section recent-study-sessions">
+            <h2>Recent Study Sessions</h2>
+            <div className="charts">
+              <div className="chart-placeholder">Chart 1</div>
+              <div className="chart-placeholder">Chart 2</div>
+            </div>
+          </section>
+        </div>
 
         {/* Task List */}
         <section className="dashboard-section">
@@ -164,7 +164,6 @@ export default function Dashboard() {
             </ul>
           </div>
         </section>
-
       </div>
     </div>
   );
