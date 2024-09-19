@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import React, { useState, useEffect  } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import bannerlogo from '../src/assets/Plan.IO__1_-removebg-preview.png';
 
@@ -43,6 +43,10 @@ export default function Login() {
   const handleRegister = () => {
      registered(username);
   };
+
+  useEffect(() => {
+    document.title = 'Plan.io- Login'; 
+  }, []);
 
   return (
     <div className="login-container">
