@@ -3,7 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import bannerlogo from '../src/assets/Plan.IO__1_-removebg-preview.png';
 
-const logins = {
+
+//TODO: remove
+let logins = {
   'admin': 'test',
   'pmonda': 'password',
   'kpeddako': '12345',
@@ -14,19 +16,13 @@ function checkPassword(username, password) {
   return logins[username] === password;
 }
 
-function registered(username) {
-  if (logins.hasOwnProperty(username)) { 
-    alert(username + ' is already registered');
-  } else {
-    let password = prompt("please set a password");
-    logins[username] = password;
-  }
-}
+
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate(); // Initialize useNavigate
+  const location = useLocation();
 
   const handleLogin = () => {
     if (checkPassword(username, password)) {
@@ -38,8 +34,16 @@ export default function Login() {
     }
   };
   
+  function registered(username) {
+    if (logins.hasOwnProperty(username)) { 
+      alert(username + ' is already registered');
+    } else {
+      navigate('/register', {state: {username: username}});
+    }
+}
+
   const handleRegister = () => {
-    registered(username);
+     registered(username);
   };
 
   useEffect(() => {
