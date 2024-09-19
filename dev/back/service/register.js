@@ -6,14 +6,12 @@ const util = require('../utils/util');
 const bcrypt = require('bcryptjs');
 
 const dynamodb = new AWS.DynamoDB.DocumentClient();
-const userTable = 'jinmeister-users';
+const userTable = 'planio-users';
 
 async function register(userInfo) {
-  const name = userInfo.name;
-  const email = userInfo.email;
   const username = userInfo.username;
   const password = userInfo.password;
-  if (!username || !name || !email || !password) {
+  if (!username || !password) {
     return util.buildResponse(401, {
       message: 'All fields are required'
     })
@@ -28,8 +26,6 @@ async function register(userInfo) {
 
   const encryptedPW = bcrypt.hashSync(password.trim(), 10);
   const user = {
-    name: name,
-    email: email,
     username: username.toLowerCase().trim(),
     password: encryptedPW
   }
