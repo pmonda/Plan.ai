@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import bannerlogo from '../src/assets/Plan.IO__1_-removebg-preview.png';
 
+
+//TODO: remove
 let logins = {
   'admin': 'test',
   'pmonda': 'password',
