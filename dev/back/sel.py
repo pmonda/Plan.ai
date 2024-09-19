@@ -41,6 +41,7 @@ test_results = []
 
 # Test 1: Correct login (existing user)
 attempt_login('admin', 'test')
+time.sleep(2)
 if driver.current_url == 'http://localhost:3000/dashboard':
     test_results.append(('Test 1', 'PASS'))
 else:
