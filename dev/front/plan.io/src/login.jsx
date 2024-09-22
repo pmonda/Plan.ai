@@ -22,7 +22,6 @@ export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate(); // Initialize useNavigate
-  const location = useLocation();
 
   const handleLogin = () => {
     if (checkPassword(username, password)) {
