@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import logins from './login';
 import axios from 'axios';
 
 const registerUrl = 'https://6ie4pgz8v8.execute-api.us-east-1.amazonaws.com/prod/register';
