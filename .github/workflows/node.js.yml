@@ -24,6 +24,8 @@ jobs:
         run:  pwd
       - name: ls
         run: ls
+      - name: OSSL_envelope fix
+        run: export NODE_OPTIONS=--openssl-legacy-provider
       # - name: Change Directory
       #   run: cd ../dev/front/plan.io
       
