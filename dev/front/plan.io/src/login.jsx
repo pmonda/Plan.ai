@@ -14,11 +14,6 @@ let logins = {
   'peda': '@!@!'
 };
 
-function checkPassword(username, password) {
-  return logins[username] === password;
-}
-
-
 
 export default function Login() {
   const [username, setUsername] = useState('');
@@ -26,15 +21,6 @@ export default function Login() {
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate(); // Initialize useNavigate
 
-  const handleLogin = () => {
-    if (checkPassword(username, password)) {
-      console.log(username + ' logged in');
-      navigate('/dashboard'); // Redirect to the dashboard page
-    } else {
-      console.log('Incorrect login');
-      alert('Incorrect username or password');
-    }
-  };
   
   function registered(username) {
     if (logins.hasOwnProperty(username)) { 
@@ -57,14 +43,14 @@ export default function Login() {
 
   const submitHandler = (event) => {
     event.preventDefault();
-    if (username.trim() === '' || password.trim() == '') {
+    if (username.trim() === '' || password.trim() === '') {
       setErrorMessage('Both the username and password are required');
       return;
     }
     setErrorMessage(null);
     const requestConfig = {
       headers: {
-        'x-api-key': 'skaeJmnPpI32jT0zy4BqS4ePv60qzb9c8NyjZt63'
+        'x-api-key': process.env.REACT_APP_API_KEY
       }
     }
 
@@ -75,7 +61,11 @@ export default function Login() {
 
     axios.post(loginUrl, requestBody, requestConfig).then((response) => {
           setUserSession(response.data.user, response.data.token);
-          navigate('/dashboard'); // Redirect to the dashboard page
+          navigate('/dashboard', {
+            state : {
+              username : username
+            }
+          }); // Redirect to the dashboard page
     }).catch((error) => {
       console.log(error);
       if (error.response.status === 401 || error.response.status === 403) {
@@ -88,7 +78,7 @@ export default function Login() {
   }
   return (
     <div>
-      <form onSubmit={submitHandler}>
+      <form id="login-register-container" onSubmit={submitHandler}>
           <img className="logo" src={bannerlogo} alt="Logo" />
           <h1>Login</h1>
           <p>Welcome to Plan.io! <br></br> Please log in to continue.</p>
@@ -110,9 +100,10 @@ export default function Login() {
           <br/>
           <input type="submit" value="Login"></input>
           <p>Don't have an account?</p>
+          {errorMessage && <p className="error">{errorMessage}</p>}
+          <button onClick={handleRegister}>Register</button>
+
       </form>
-      {errorMessage && <p className="error">{errorMessage}</p>}
-      <button onClick={handleRegister}>Register</button>
     </div>
   );
 }
