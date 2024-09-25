@@ -2,13 +2,15 @@ import React, { useState, useEffect, useRef } from 'react';
 import './Dash.css'; // Import the updated CSS file
 import quotesDB from './quotesDB'; // Import the quotes
 import Modal from './Modal'; // Import the Modal component
+import { useLocation } from 'react-router-dom';
 
-export default function Dashboard() {
+export default function Dashboard(props) {
+  const location = useLocation();
   const [tasks, setTasks] = useState([]);
   const [newTask, setNewTask] = useState("");
   const [quote, setQuote] = useState("");
   const [author, setAuthor] = useState("");
-  const username = "Kushal"; // Replace this with dynamic username in the future
+  const username = location.state.username; // Replace this with dynamic username in the future
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fileInputRef = useRef(null);
