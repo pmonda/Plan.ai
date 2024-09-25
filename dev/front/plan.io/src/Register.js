@@ -8,6 +8,7 @@ const registerUrl = 'https://6ie4pgz8v8.execute-api.us-east-1.amazonaws.com/prod
 const Register = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [passwordConfirm, setPasswordConfirm] = useState('');
   const [message, setMessage] = useState(null);
 
   const submitHandler = (event) => {
@@ -20,11 +21,17 @@ const Register = () => {
     }
     const requestBody = {
       username: username,
-      password: password
+      password: password,
+      passwordConfirm: passwordConfirm
+    }
+    if(password != passwordConfirm) {
+      setMessage('Passwords do not match');
+      return;
     }
     axios.post(registerUrl, requestBody, requestConfig).then(response => {
       setMessage('Registeration Successful');
     }).catch(error => {
+      
       if (error.response.status === 401) {
         setMessage(error.response.data.message);
       } else {
@@ -37,8 +44,9 @@ const Register = () => {
     <div>
       <form onSubmit={submitHandler}>
         <h5>Register</h5>
-        username: <input type="text" value={username} onChange={event => setUsername(event.target.value)} /> <br/>
-        password: <input type="text" value={password} onChange={event => setPassword(event.target.value)} /> <br/>
+        Username: <input type="text" value={username} onChange={event => setUsername(event.target.value)} /> <br/>
+        Password: <input type="password" value={password} onChange={event => setPassword(event.target.value)} /> <br/>
+        Re-Enter Password: <input type="password" value={passwordConfirm} onChange={event => setPasswordConfirm(event.target.value)}></input>
         <input type="submit" value="Register" />
       </form>
       {message && <p className="message">{message}</p>}
