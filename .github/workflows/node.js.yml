@@ -19,9 +19,6 @@ jobs:
 
     steps:
       # Check out the repository
-      - name: environment
-        with:
-          super_secret: ${{secrets.API_KEY}}
       - uses: actions/checkout@v4
       - name: PWD
         run:  pwd
