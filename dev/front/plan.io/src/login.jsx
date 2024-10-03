@@ -31,7 +31,10 @@ export default function Login() {
 }
 
   const handleRegister = () => {
-     registered(username);
+    registered(username);
+  };
+  const forgotPassword = () => {
+    registered(username);
   };
 
   useEffect(() => {
@@ -101,8 +104,9 @@ export default function Login() {
           <input type="submit" value="Login"></input>
           <p>Don't have an account?</p>
           {errorMessage && <p className="error">{errorMessage}</p>}
-          <button onClick={handleRegister}>Register</button>
-
+          <button onClick={handleRegister}>Register</button>                
+          &nbsp;
+          <button onClick={forgotPassword}>Forgot Password</button>
       </form>
     </div>
   );
