@@ -64,6 +64,13 @@ body {
   text-decoration: underline;
 }
 
+.file-input {
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+}
+
 .dashboard-header {
   background-color: #007bff;
   color: white;

@@ -6,6 +6,7 @@ import SettingsModal from './SettingsModal'; // Import the new Settings Modal
 import ProfileModal from './ProfileModal';
 import { useLocation } from 'react-router-dom';
 import { Howl } from 'howler';
+import pdfToText from 'react-pdftotext'
 
 export default function Dashboard(props) {
   const sound = new Howl({
@@ -106,42 +107,56 @@ export default function Dashboard(props) {
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     if (!file) return;
-  
+
+    const sizeLimit = 5 * 1024 * 1024; // 5MB limit
+
+    if (file.size > sizeLimit) {
+        setUploadedText("File is too large. Please upload a file smaller than 5MB.");
+        return;
+    }
+
     setUploading(true);      // Set loading state to true
     setFileName(file.name);   // Set the file name in state
-  
+
     const reader = new FileReader();
-  
+
     // Track progress of file upload
     reader.onprogress = (event) => {
-      if (event.lengthComputable) {
-        const percentLoaded = Math.round((event.loaded / event.total) * 100);
-        setProgress(percentLoaded);  // Update the progress
-      }
+        if (event.lengthComputable) {
+            const percentLoaded = Math.round((event.loaded / event.total) * 100);
+            setProgress(percentLoaded);  // Update the progress
+        }
     };
-  
+
     reader.onload = async () => {
-      const arrayBuffer = reader.result;
-  
-      try {
-        const extractedText = await window.pythonApi.extractPdfText(arrayBuffer);
-        setUploadedText(extractedText || "No text extracted.");
-      } catch (error) {
-        console.error("Error processing file:", error);
-        setUploadedText("Error extracting text.");
-      } finally {
-        setUploading(false);  // Loading completed
-      }
+        const arrayBuffer = reader.result;
+
+        try {
+            // Extract the text from the PDF
+            const extractedText = await window.pythonApi.extractPdfText(arrayBuffer);
+            console.log("Extracted text:", extractedText);
+            setUploadedText(extractedText || "No text extracted.");
+
+            // Process the extracted text using an internal function tied to process.py
+            const processedResult = await window.pythonApi.processPdfText(extractedText); // Trigger internal processing
+            console.log("Processed Result:", processedResult);
+        } catch (error) {
+            console.error("Error processing file:", error);
+            setUploadedText("Error extracting text.");
+        } finally {
+            setUploading(false);  // Loading completed
+        }
     };
-  
+
     reader.onerror = () => {
-      console.error("File reading error.");
-      setUploadedText("Error reading file.");
-      setUploading(false);  // Error, stop loading
+        console.error("File reading error.");
+        setUploadedText("Error reading file.");
+        setUploading(false);  // Error, stop loading
     };
-  
+
     reader.readAsArrayBuffer(file);
-  };
+};
+
 
   const sortedTasks = tasks.sort((a, b) => a.completed - b.completed);
 
@@ -279,6 +294,13 @@ export default function Dashboard(props) {
     setBreakTimeLeft(newBreakTime); // Update the displayed break time
   };
 
+  function extractText(event) {
+    const file = event.target.files[0]
+    pdfToText(file)
+        .then(text => setUploadedText(text))
+        .catch(error => console.error("Failed to extract text from pdf"))
+  }
+
   return (
     <div className={`dashboard-container ${isLightMode ? 'light-mode' : 'dark-mode'}`}>
       {/* Sidebar */}
@@ -291,14 +313,8 @@ export default function Dashboard(props) {
           "{quote}" <br />– {author}
         </p>
         <div className="upload-section">
-          <button className="upload-button" onClick={handleUploadClick}>Upload PDF</button>
-          <input
-            type="file"
-            accept="application/pdf"
-            ref={fileInputRef}
-            style={{ display: 'none' }}
-            onChange={handleFileChange}
-          />
+        <input type="file" className="file-input" accept="application/pdf" onChange={extractText}/>
+     
         </div>
         <ul>
           <li><a onClick={handleProfileClick}>Profile</a></li> {/* Profile link */}
@@ -350,7 +366,7 @@ export default function Dashboard(props) {
         </div>
 
         <section className="dashboard-section recent-timers-section">
-                <h2>Recent Timers 📊</h2>
+                <h2>Session Timers 📊</h2>
                 <table>
                     <thead>
                         <tr>
@@ -436,9 +452,7 @@ export default function Dashboard(props) {
 
         <section className="dashboard-section pdf-text-section">
           <h2>Extracted Text</h2>
-          <div className="pdf-text-display">
-            {uploadedText}
-          </div>
+          {uploadedText}          
         </section>
       </div>
       
