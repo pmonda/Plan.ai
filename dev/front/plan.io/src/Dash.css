@@ -6,6 +6,38 @@ body {
   background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
 }
 
+/* Ensure the text in the PDF Guide section has the same style consistency */
+.uploaded-text-display {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  max-height: 300px; /* Adjust height as needed */
+  overflow-y: auto; /* Allow scrolling for large text */
+  margin-top: 10px;
+}
+
+/* Style the Clear Text button */
+.clear-text-button {
+  background-color: #007bff; /* Matching your red button style */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.clear-text-button:hover {
+  background-color: #0056b3; /* Darken on hover for effect */
+}
+
+
 .dashboard-container {
   display: flex; /* Use flexbox for the entire layout */
   height: 100vh; /* Full height of the viewport */
