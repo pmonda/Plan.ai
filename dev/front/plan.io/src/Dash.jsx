@@ -215,7 +215,7 @@ const extractTasks = () => {
 
     const confirmLogout = () => {
       setIsModalOpen(false);
-      window.location.href = '/';
+      window.location.href = '/#';
     };
 
     const cancelLogout = () => {
