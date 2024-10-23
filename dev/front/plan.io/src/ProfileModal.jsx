@@ -10,7 +10,6 @@ const ProfileModal = ({ isOpen, onClose }) => {
   const [timeZone, setTimeZone] = useState("");
   const location = useLocation();
   const email = location.state.email;
-  const dob = location.state.date_of_birth;
   // Validation function for email
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
