@@ -420,8 +420,8 @@ async function processTextWithNLP() {
   
           </div>
           <ul>
-            <li><a onClick={handleProfileClick}>Profile</a></li> {/* Profile link */}
-            <li><a onClick={handleSettingsClick}>Settings</a></li> {/* Trigger settings modal */}
+            <li><div onClick={handleProfileClick}>Profile</div></li> {/* Profile link */}
+            <li><div onClick={handleSettingsClick}>Settings</div></li> {/* Trigger settings modal */}
             <li><button onClick={handleLogout}>Logout</button></li>
           </ul>
         </aside>
