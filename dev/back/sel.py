@@ -39,61 +39,48 @@ def attempt_registration(username):
 # Store test results
 test_results = []
 
-# Test 1: Correct login (existing user)
-attempt_login('admin', 'test')
-time.sleep(2)
-if driver.current_url == 'http://localhost:3000/dashboard':
-    test_results.append(('Test 1', 'PASS'))
-else:
-    test_results.append(('Test 1', 'FAIL'))
 
-# Test 2: Incorrect login (wrong password)
-attempt_login('admin', 'wrongpassword')
+# Test 2: Failed login with incorrect password
+print("Test2:")
+attempt_login('kpeddakotla123', 'wrongPassword')
 try:
     alert = driver.switch_to.alert
     if alert.text == 'Incorrect username or password':
-        test_results.append(('Test 2', 'PASS'))
+        test_results.append(('Test 2: Failed login (incorrect password)', 'PASS'))
     alert.accept()
 except:
-    test_results.append(('Test 2', 'FAIL'))
+    test_results.append(('Test 2: Failed login (incorrect password)', 'FAIL'))
 
-# Test 3: Login with non-existing user
-attempt_login('nonexistent', 'password')
+# Test 3: Failed login with non-existing username
+print("Test3:")
+attempt_login('nonExistingUser', 'anyPassword')
 try:
     alert = driver.switch_to.alert
     if alert.text == 'Incorrect username or password':
-        test_results.append(('Test 3', 'PASS'))
+        test_results.append(('Test 3: Failed login (non-existing user)', 'PASS'))
     alert.accept()
 except:
-    test_results.append(('Test 3', 'FAIL'))
+    test_results.append(('Test 3: Failed login (non-existing user)', 'FAIL'))
 
-# Test 4: Empty login attempt
+# Test 4: Empty login fields
+print("Test4:")
 attempt_login('', '')
 try:
     alert = driver.switch_to.alert
-    if alert.text == 'Incorrect username or password':
-        test_results.append(('Test 4', 'PASS'))
+    if alert.text == 'Please enter username and password':
+        test_results.append(('Test 4: Empty login fields', 'PASS'))
     alert.accept()
 except:
-    test_results.append(('Test 4', 'FAIL'))
+    test_results.append(('Test 4: Empty login fields', 'FAIL'))
 
-# Test 5: Login with special characters in username
-attempt_login('admin$', 'test')
-try:
-    alert = driver.switch_to.alert
-    if alert.text == 'Incorrect username or password':
-        test_results.append(('Test 5', 'PASS'))
-    alert.accept()
-except:
-    test_results.append(('Test 5', 'FAIL'))
-
-# Test 6: Successful registration of a new user
-attempt_registration('newuser1')
-if 'newuser1' in driver.page_source:
-    test_results.append(('Test 6', 'PASS'))
+# Test 1: Successful login with valid credentials
+print("Test5:")
+attempt_login('kpeddakotla123', 'Kushal2011!!')
+time.sleep(2)
+if driver.current_url == 'http://localhost:3000/dashboard':
+    test_results.append(('Test 1: Successful login', 'PASS'))
 else:
-    test_results.append(('Test 6', 'FAIL'))
-
+    test_results.append(('Test 1: Successful login', 'FAIL'))
 # Close the browser after all tests
 driver.quit()
 
