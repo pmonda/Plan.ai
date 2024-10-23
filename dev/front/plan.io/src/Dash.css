@@ -24,7 +24,6 @@ body {
 
 /* Style the Clear Text button */
 .clear-text-button {
-  background-color: #007bff; /* Matching your red button style */
   color: white;
   border: none;
   padding: 10px 20px;
@@ -32,11 +31,6 @@ body {
   border-radius: 5px;
   margin-top: 10px;
 }
-
-.clear-text-button:hover {
-  background-color: #0056b3; /* Darken on hover for effect */
-}
-
 
 .dashboard-container {
   display: flex; /* Use flexbox for the entire layout */
@@ -290,7 +284,6 @@ body {
 .timer-controls button {
   padding: 10px 20px;
   font-size: 16px;
-  background-color: #007bff;
   color: white;
   border: none;
   border-radius: 5px;
@@ -298,9 +291,6 @@ body {
   margin: 0 5px;
 }
 
-.timer-controls button:hover {
-  background-color: #0056b3;
-}
 
 .timer-controls button:disabled {
   background-color: #cccccc;
@@ -351,7 +341,6 @@ body {
     border: none;
     border-radius: 5px;
     cursor: pointer;
-    background-color: #007bff;
     color: white;
     transition: background-color 0.3s;
 }
@@ -361,9 +350,6 @@ body {
     cursor: not-allowed;
 }
 
-.timer-controls button:hover:not(:disabled) {
-    background-color: #0056b3;
-}
 
 /* Recent Timers Styles */
 table {

@@ -1,11 +1,10 @@
-  import React, { useState, useEffect, useRef } from 'react';
+  import React, { useState, useEffect} from 'react';
   import './Dash.css'; // Import the updated CSS file
   import quotesDB from './quotesDB'; // Import the quotes
   import Modal from './Modal'; // Import the existing Modal component for logout
   import SettingsModal from './SettingsModal'; // Import the new Settings Modal
   import ProfileModal from './ProfileModal';
   import { useLocation } from 'react-router-dom';
-  import { Howl } from 'howler';
   import pdfToText from 'react-pdftotext'
 
   export default function Dashboard(props) {
@@ -16,12 +15,7 @@
     const streak = 0;
     const [isModalOpen, setIsModalOpen] = useState(false); // State for logout modal
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false); // State for settings modal
-    const [isLightMode, setIsLightMode] = useState(true); // State for light/dark mode
-    const fileInputRef = useRef(null);
     const [uploadedText, setUploadedText] = useState("Please Upload a PDF to begin"); // State for uploaded text 
-    const [responseText, setResponseText] = useState("");
-    const [loadingText, setLoadingText] = useState("Loading.");
-    const [isLoading, setIsLoading] = useState(false);
     const [extractedText, setExtractedText] = useState("");
 
     // Pomodoro Timer States
@@ -33,7 +27,6 @@
     const [isBreakRunning, setIsBreakRunning] = useState(false); // State for break timer
     const [recentTimers, setRecentTimers] = useState([]); // To track recent timers
     const [startTime, setStartTime] = useState(null); // To store the start time
-    const audioRef = useRef(null); // Ref for the audio element
 
     const [tasks, setTasks] = useState([]);
     const [newTask, setNewTask] = useState("");
@@ -58,6 +51,18 @@
       const currentDay = new Date().getDay();
       return daysOfWeek[currentDay];
     };
+
+    const clearTextAndFile = () => {
+      // Clear the uploaded text
+      setUploadedText("Please Upload a PDF to begin");
+    
+      // Clear the file input
+      const fileInput = document.getElementById("file-input");
+      if (fileInput) {
+        fileInput.value = ""; // Reset the file input field
+      }
+    };
+    
 
     const handleAddTask = () => {
       if (newTask.trim() && description.trim() && dueDate.trim()) {
@@ -196,10 +201,6 @@ const extractTasks = () => {
       setTasks(updatedTasks);
     };
 
-    const handleUploadClick = () => {
-      fileInputRef.current.click();
-    };
-
     const sortedTasks = tasks.sort((a, b) => a.completed - b.completed);
 
     useEffect(() => {
@@ -245,29 +246,13 @@ const extractTasks = () => {
         timer = setInterval(() => {
           setTimeLeft(prevTime => prevTime - 1);
         }, 1000);
-      } else if (timeLeft == 0 && isBreakRunning) {
+      } else if (timeLeft === 0 && isBreakRunning) {
         setIsRunning(false);
-        //audioRef.current.play(); // Play sound when the timer reaches zero
         alert("Work session completed! Time for a break."); // Alert when work timer is complete
       }
 
       return () => clearInterval(timer); // Cleanup timer
-  }, [isRunning, timeLeft]);
-
-
-  useEffect(() => {
-    let interval;
-    if (isLoading) {
-        let dotCount = 1;
-        interval = setInterval(() => {
-            dotCount = (dotCount % 3) + 1;  // Cycle through 1, 2, 3 dots
-            setLoadingText(`Loading${'.'.repeat(dotCount)}`);
-        }, 1000);  // Change text every second
-    } else {
-        clearInterval(interval);  // Stop interval when not loading
-    }
-    return () => clearInterval(interval);  // Cleanup interval on unmount
-  }, [isLoading]);
+  }, [isRunning, isBreakRunning, timeLeft]);
 
     // Break Timer Logic
     useEffect(() => {
@@ -276,10 +261,9 @@ const extractTasks = () => {
         breakTimer = setInterval(() => {
           setBreakTimeLeft(prevTime => prevTime - 1);
         }, 1000);
-      } else if (breakTimeLeft == 0 && isBreakRunning) {
+      } else if (breakTimeLeft === 0 && isBreakRunning) {
         alert("Break session completed! Time to get back to work.");
         setIsBreakRunning(false);
-        //audioRef.current.play(); // Play sound when the break timer reaches zero
       }
 
       return () => clearInterval(breakTimer); // Cleanup break timer
@@ -351,48 +335,6 @@ const extractTasks = () => {
       setBreakTimeLeft(newBreakTime); // Update the displayed break time
     };
 
-    
-function extractTextFromPDF(event) {
-  setIsExportDisabled(false);
-  const file = event.target.files[0];
-
-  // Check if a file is selected
-  if (!file) {
-      console.error("No file selected.");
-      return;
-  }
-
-  // Log the file details for debugging
-  console.log(`Selected file: ${file.name}, File size: ${file.size} bytes`);
-
-  // Convert 5 MB to bytes
-  const maxSizeInBytes = 5 * 1024 * 1024; // 5 MB
-
-  // Check if the file size exceeds 5 MB
-  if (file.size > maxSizeInBytes) {
-      setUploadedText("Error: File size exceeds 5 MB. Please upload a smaller PDF.");
-      console.error("File size exceeds 5 MB.");
-      return;
-  }
-
-  // Log that the file is within acceptable size
-  console.log("File size is within the acceptable range.");
-
-  // Proceed with text extraction
-  pdfToText(file)
-      .then(async (text) => {
-          console.log("Extracted text from PDF:", text.substring(0, 1000), "...");
-
-          // Set the extracted text
-          setUploadedText(text);
-      })
-      .catch(error => {
-          console.error("Failed to extract text from PDF:", error);
-          setUploadedText("Failed to extract text from PDF. Please wait 2-3 mins and try again.");
-      });
-}
-
-
 function extractTextFromPDF(event) {
   setIsExportDisabled(false);
   const file = event.target.files[0];
@@ -436,7 +378,7 @@ function extractTextFromPDF(event) {
 }
 
 async function processTextWithNLP() {
-  setUploadedText("Processing PDF...")
+  setUploadedText("Processing PDF. Please give our systems time to fully process your assignment!")
   try {
     console.log("Processing with extracted text:", extractedText);
     const response = await fetch('http://localhost:3000/process-text', {
@@ -462,7 +404,7 @@ async function processTextWithNLP() {
   }
 }
     return (
-      <div className={`dashboard-container ${isLightMode ? 'light-mode' : 'dark-mode'}`}>
+      <div className={`dashboard-container`}>
         {/* Sidebar */}
         <aside className="dashboard-sidebar">
           <h3>&lt;Plan.io&gt;</h3>
@@ -473,8 +415,9 @@ async function processTextWithNLP() {
             "{quote}" <br />– {author}
           </p>
           <div className="upload-section">
-          <input type="file" className="file-input" accept="application/pdf" onChange={extractTextFromPDF}/>
-      
+            <p>Upload a File Here: </p>
+            <input type="file" id="file-input" className="file-input" accept="application/pdf" onChange={extractTextFromPDF}/>
+  
           </div>
           <ul>
             <li><a onClick={handleProfileClick}>Profile</a></li> {/* Profile link */}
@@ -628,7 +571,7 @@ async function processTextWithNLP() {
             </div>
           </section>
           <section className="dashboard-section pdf-text-section">
-            <h2>Guide</h2>
+            <h2>Assignment Guide</h2>
             
             {/* Use div instead of pre, and add dangerouslySetInnerHTML for HTML rendering */}
             <div 
@@ -645,10 +588,10 @@ async function processTextWithNLP() {
             </button>
             &nbsp;
             <button 
-              onClick={() => setUploadedText("Please Upload a PDF to begin")} 
+              onClick={() => clearTextAndFile()} 
               className="clear-text-button"
             >
-              Clear Text
+              Clear Text/File
             </button>
             &nbsp;
             <button 
