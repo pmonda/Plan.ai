@@ -28,7 +28,7 @@
     "prestart": "set NODE_OPTIONS=--openssl-legacy-provider",
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "jest",
+    "test": "python ../../back/sel.py",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -37,6 +37,7 @@
       "react-app/jest"
     ]
   },
+  "homepage": ".",
   "browserslist": {
     "production": [
       ">0.2%",

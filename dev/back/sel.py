@@ -1,6 +1,8 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 import time
 from colorama import init, Fore, Style
 
@@ -73,14 +75,24 @@ try:
 except:
     test_results.append(('Test 4: Empty login fields', 'FAIL'))
 
-# Test 1: Successful login with valid credentials
-print("Test5:")
-attempt_login('kpeddakotla123', 'Kushal2011!!')
-time.sleep(2)
-if driver.current_url == 'http://localhost:3000/dashboard':
-    test_results.append(('Test 1: Successful login', 'PASS'))
-else:
-    test_results.append(('Test 1: Successful login', 'FAIL'))
+# # Test 5: Successful login with valid credentials
+print("Test 5: Successful login with valid credentials")
+attempt_login('demo', 'demo')
+
+try:
+    # Wait for the dashboard element to be present
+    dashboard_element = WebDriverWait(driver, 40).until(
+        EC.presence_of_element_located((By.ID, 'dashboard'))
+    )
+    print(driver.current_url)  # Debugging statement
+    if driver.current_url == 'http://localhost:3000/dashboard':
+        test_results.append(('Test 5: Successful login', 'PASS'))
+    else:
+        test_results.append(('Test 5: Successful login', 'FAIL'))
+except Exception as e:
+    print(f"Exception: {e}")  # Debugging statement
+    test_results.append(('Test 5: Successful login', 'FAIL'))
+
 # Close the browser after all tests
 driver.quit()
 
