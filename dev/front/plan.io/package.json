@@ -30,7 +30,7 @@
   "scripts": {
     "prestart": "set NODE_OPTIONS=--openssl-legacy-provider",
     "start": "react-scripts start",
-    "build": "react-scripts --openssl-legacy-provider build"
+    "build": "react-scripts --openssl-legacy-provider build",
     "test": "react-scripts test",
     "test:coverage": "npm test -- --env=jsdom --coverage",
     "eject": "react-scripts eject"
