@@ -52,7 +52,7 @@ jobs:
       # - name: Run Tests
       #   run: npm test
       - name: Coverage Test
-        run: npm test -- --env=jsdom --coverage
+        run: npm test
 
       # Upload test results (optional)
       # - name: Upload Test Results
