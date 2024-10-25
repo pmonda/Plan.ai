@@ -52,7 +52,10 @@ jobs:
       # - name: Run Tests
       #   run: npm test
       - name: Coverage Test
-        run: npm test
+        run: |
+              pip install selenium
+              pip install colorama
+              npm test
 
       # Upload test results (optional)
       # - name: Upload Test Results
