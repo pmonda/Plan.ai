@@ -1,10 +1,10 @@
 // App.js
 import React from 'react';
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
-import Login from './login';
-import Dashboard from './Dash'; // Create this component
-import Register from './Register';
-function App() {
+import Login from './login.jsx';
+import Dashboard from './Dash.jsx'; // Create this component
+import Register from './Register.js';
+export const App = ()=>{
   return (
     <Router>
       <Routes>
@@ -16,4 +16,3 @@ function App() {
   );
 }
 
-export default App;

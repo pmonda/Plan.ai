@@ -1,0 +1,14 @@
+{
+  "name": "plan.io",
+  "version": "0.1.0",
+  "description": "Project description",
+  "scripts": {
+    "test": "jest"
+  },
+  "devDependencies": {
+    "jest": "^27.4.7"
+  },
+  "dependencies": {
+    "plan.io": "file:"
+  }
+}
