@@ -1,0 +1,419 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@100..900&display=swap');
+
+body {
+  margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  background: linear-gradient(to right, rgba(106, 17, 203, 1), rgba(37, 117, 252, 1));
+}
+
+/* Ensure the text in the PDF Guide section has the same style consistency */
+.uploaded-text-display {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 10px;
+  border: 1px solid #ccc;
+  background-color: #f9f9f9;
+  border-radius: 5px;
+  max-height: 300px; /* Adjust height as needed */
+  overflow-y: auto; /* Allow scrolling for large text */
+  margin-top: 10px;
+}
+
+/* Style the Clear Text button */
+.clear-text-button {
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  margin-top: 10px;
+}
+
+.dashboard-container {
+  display: flex; /* Use flexbox for the entire layout */
+  height: 100vh; /* Full height of the viewport */
+  flex-direction: row; /* Stack elements vertically */    
+  padding-left: 225px; /* Add left padding for all sections */
+
+}
+
+.dashboard-sections {
+    display: flex; /* Enable flexbox for sections */
+    flex-wrap: wrap; /* Allow wrapping if there's not enough space */
+    justify-content: space-between; /* Space out sections */
+}
+
+.dashboard-sidebar {
+  background-color: #000;
+  color: white;
+  width: 200px;
+  padding: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  text-align: center;
+}
+
+.dashboard-sidebar h3 {
+  margin-top: 0;
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  text-align: center;
+  text-shadow: 2px 2px 5px rgba(0, 26, 255, 0.8);
+}
+
+.dashboard-sidebar ul {
+  list-style: none;
+  padding: 0;
+}
+
+.dashboard-sidebar ul li {
+  margin-bottom: 15px;
+}
+
+.dashboard-sidebar ul li a {
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.dashboard-sidebar ul li a:hover {
+  text-decoration: underline;
+}
+
+.file-input {
+  padding: 10px;
+  background-color: #007bff;
+  color: #fff;
+  cursor: pointer;
+}
+
+.dashboard-header {
+  background-color: #007bff;
+  color: white;
+  padding: 20px;
+  text-align: center;
+  width: calc(100% - 240px);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.7);
+  margin: 0;
+  position: fixed;
+  top: 0;
+  left: 240px;
+  z-index: 1;
+}
+
+.dashboard-content {
+  flex: 1;
+  padding: 20px;
+}
+
+.motivational-quote {
+  font-style: italic;
+  margin-top: 10px;
+}
+
+.dashboard-section {
+  background: #f9f9f9; /* Light background for sections */
+  border: 2px solid #000; /* Light border */
+  border-radius: 8px; /* Rounded corners */
+  padding: 20px;
+  margin: 10px; /* Space between sections */
+  flex: 1 1 300px; /* Flex properties: grow, shrink, base width */
+  min-width: 250px; /* Minimum width to avoid too small sections */
+
+}
+
+.dashboard-section h2 {
+  margin-top: 0;
+  color: #333;
+}
+
+.charts {
+  display: flex;
+  justify-content: space-between;
+}
+
+.chart-placeholder {
+  background-color: #e0e0e0;
+  height: 200px;
+  width: 48%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333;
+  font-size: 18px;
+}
+
+.task-list {
+  padding-bottom: 20px;
+}
+
+.task-list ul {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+}
+
+.task-list li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.task-list input[type="text"] {
+  padding: 8px;
+  margin-right: 10px;
+  flex: 1;
+}
+
+.task-list .task-text {
+  flex: 1;
+}
+
+.task-list li.completed-task .task-text {
+  text-decoration: line-through;
+  color: #999;
+}
+
+.task-list li button {
+  margin-left: 10px;
+  padding: 5px 10px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.task-list li button:hover {
+  background-color: #cc0000;
+}
+
+.upload-section {
+  margin-top: auto;
+  text-align: center;
+}
+
+.upload-btn {
+  padding: 10px;
+  background-color: #ff4d4d;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.upload-btn:hover {
+  background-color: #e60000;
+}
+
+.current-streak {
+  text-align: center;
+}
+
+.current-streak .streak-number {
+  font-size: 48px;
+  font-weight: bold;
+  color: #333;
+}
+
+.current-streak .streak-label {
+  font-size: 18px;
+  color: #666;
+}
+
+.current-streak-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.dashboard-section.current-streak-section {
+  width: 150%;
+  padding: 20px;
+  display: flex;
+  justify-content: center;
+  text-align: center;
+}
+
+.current-streak {
+  width: 70%;
+  background-color: #f8f9fa;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  padding: 40px;
+}
+
+.current-streak .streak-number {
+  font-size: 64px;
+  font-weight: bold;
+  color: #333;
+}
+
+.current-streak .streak-label {
+  font-size: 24px;
+  color: #666;
+}
+
+.pomodoro-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.timer-display {
+  font-size: 48px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.timer-controls button {
+  padding: 10px 20px;
+  font-size: 16px;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: 0 5px;
+}
+
+
+.timer-controls button:disabled {
+  background-color: #cccccc;
+  cursor: not-allowed;
+}
+
+.recent-timers-section table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 20px;
+}
+
+.recent-timers-section th, .recent-timers-section td {
+  border: 1px solid #ddd;
+  padding: 8px;
+}
+
+.recent-timers-section th {
+  background-color: #f2f2f2;
+  text-align: left;
+}
+
+.break-section {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+}
+.pomodoro-section {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.timer-display {
+    font-size: 48px;
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.timer-controls {
+    display: flex;
+    gap: 10px;
+}
+
+.timer-controls button {
+    padding: 10px 15px;
+    font-size: 16px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    color: white;
+    transition: background-color 0.3s;
+}
+
+.timer-controls button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+
+/* Recent Timers Styles */
+table {
+  width: 100%; /* Ensure table takes full width */
+  border-collapse: collapse; /* Collapse borders for cleaner look */
+}
+
+thead {
+    background-color: #f0f0f0;
+}
+
+th, td {
+    padding: 10px;
+    text-align: left;
+    border: 1px solid #ccc;
+}
+
+th {
+    background-color: #e0e0e0;
+}
+
+.task-list .emoji {
+    font-size: 1.5rem; /* Adjust the emoji size */
+    margin-right: 10px; /* Space between emoji and task text */
+}
+
+.task-list table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.task-list th, .task-list td {
+  padding: 10px;
+  text-align: left;
+  border-bottom: 1px solid #ddd;
+}
+
+.completed-task {
+  text-decoration: line-through;
+  color: gray;
+}
+
+.task-list th {
+  background-color: #f2f2f2;
+}
+
+.emoji-column {
+  width: 50px; /* Set a fixed width for emoji column */
+}
+
+.checkbox-column {
+  width: 50px; /* Set a fixed width for checkbox column */
+}
+.actions-column {
+  width: 80px; /* Set a fixed width for actions column */
+}
+
+/* Make task column flexible */
+td:not(.emoji-column):not(.checkbox-column):not(.actions-column) {
+  width: auto; /* Let the task column take remaining space */
+}
+
+.h3{
+  align-items: center;
+  padding: 10px;
+
+}

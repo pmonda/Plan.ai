@@ -1,7 +1,10 @@
+dev/back/*.zip
+dev/back/node_modules
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
 # dependencies
-/node_modules
+dev/front/node_modules
+dev/front/plan.io/node_modules
 /.pnp
 .pnp.js
 
@@ -21,11 +24,5 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-dev/front/plan.io/.env
-dev/back/archive.zip
-dev/back/archive2.zip
-dev/back/archive3.zip
-dev/back/archive4.zip
-dev/back/archive5.zip
-dev/back/archive6.zip
-dev/back/archive7.zip
+
+node_modules

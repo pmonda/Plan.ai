@@ -1,90 +1,113 @@
-import { useForm } from 'react-hook-form';
-import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import Link from '@mui/material/Link';
-import Box from '@mui/material/Box';
-import Typography from '@mui/material/Typography';
+import React, { useState, useEffect  } from 'react';
+import { useNavigate } from 'react-router-dom';
+import './Login.css';
+import { setUserSession } from './service/AuthService';
+import axios from 'axios';
+import bannerlogo from '../src/assets/Plan.IO__1_-removebg-preview.png';
 
-const LoginForm = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
 
-  const onSubmit = (data) => {
-    // Add your login logic here using the data object
-    console.log('Login successful', data);
-  };
-
-  return (
-    <Box
-      component="form"
-      onSubmit={handleSubmit(onSubmit)}
-      sx={{
-        maxWidth: '500px',
-        margin: 'auto',
-        padding: '20px',
-        borderRadius: '8px',
-        boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-        backgroundColor: 'white',
-      }}
-    >
-      <Typography variant="h5" component="div" sx={{ mb: 2 }}>
-        Login Form
-      </Typography>
-      <TextField
-        fullWidth
-        label="Username"
-        {...register('username', {
-          required: 'Username is required',
-          minLength: {
-            value: 3,
-            message: 'Username must be at least 3 characters',
-          },
-        })}
-        error={Boolean(errors.username)}
-        helperText={errors.username?.message}
-        margin="normal"
-      />
-      <TextField
-        fullWidth
-        type="password"
-        label="Password"
-        {...register('password', {
-          required: 'Password is required',
-          minLength: {
-            value: 6,
-            message: 'Password must be at least 6 characters',
-          },
-        })}
-        error={Boolean(errors.password)}
-        helperText={errors.password?.message}
-        margin="normal"
-        sx={{ mt: 2 }}
-      />
-      <FormControlLabel
-        control={<Checkbox {...register('rememberMe')} color="primary" />}
-        label="Remember Me"
-        sx={{ mt: 1, textAlign: 'left' }}
-      />
-      <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>
-        Login
-      </Button>
-      <Box sx={{ mt: 2, textAlign: 'center' }}>
-        <Link href="#" variant="body2">
-          Forgot Password?
-        </Link>
-        <Box mt={1}>
-          <Link href="#" variant="body2">
-            Don't have an account? Sign Up
-          </Link>
-        </Box>
-      </Box>
-    </Box>
-  );
+//TODO: remove
+let logins = {
+  'admin': 'test',
+  'pmonda': 'password',
+  'kpeddako': '12345',
+  'peda': '@!@!'
 };
 
-export default LoginForm;
+
+export default function Login() {
+  const [username, setUsername] = useState('');
+  const [password, setPassword] = useState('');
+  const [errorMessage, setErrorMessage] = useState('');
+  const navigate = useNavigate(); // Initialize useNavigate
+
+  
+  function registered(username) {
+    if (logins.hasOwnProperty(username)) { 
+      alert(username + ' is already registered');
+    } else {
+      navigate('/register', {state: {username: username}});
+    }
+}
+
+  const handleRegister = () => {
+    registered(username);
+  };
+  const forgotPassword = () => {
+    registered(username);
+  };
+
+  useEffect(() => {
+    document.title = 'Plan.io- Login'; 
+  }, []);
+
+
+  const loginUrl = 'https://6ie4pgz8v8.execute-api.us-east-1.amazonaws.com/prod/login';
+
+  const submitHandler = (event) => {
+    event.preventDefault();
+    if (username.trim() === '' || password.trim() === '') {
+      setErrorMessage('Both the username and password are required');
+      return;
+    }
+    setErrorMessage(null);
+    const requestConfig = {
+      headers: {
+        'x-api-key': process.env.REACT_APP_API_KEY
+      }
+    }
+
+    const requestBody = {
+      username: username,
+      password: password
+    }
+
+    axios.post(loginUrl, requestBody, requestConfig).then((response) => {
+          setUserSession(response.data.user, response.data.token);
+          navigate('/dashboard', {
+            state : {
+              username : username
+            }
+          }); // Redirect to the dashboard page
+    }).catch((error) => {
+      console.log(error);
+      if (error.response.status === 401 || error.response.status === 403) {
+        setErrorMessage(error.response.data.message);
+      } 
+      else {
+        setErrorMessage('A server error occurred. Please try again later.');
+      }
+    })
+  }
+  return (
+    <div>
+      <form id="login-register-container" onSubmit={submitHandler}>
+          <img className="logo" src={bannerlogo} alt="Logo" />
+          <h1>Login</h1>
+          <p>Welcome to Plan.io! <br></br> Please log in to continue.</p>
+          <input 
+            id="user" 
+            value={username} 
+            onChange={(e) => setUsername(e.target.value)} 
+            placeholder="Username" 
+          />
+          <input 
+            id="pwd" 
+            type="password" 
+            value={password} 
+            onChange={(e) => setPassword(e.target.value)} 
+            placeholder="Password" 
+          />
+          <br/>
+          <br/>
+          <br/>
+          <input type="submit" value="Login"></input>
+          <p>Don't have an account?</p>
+          {errorMessage && <p className="error">{errorMessage}</p>}
+          <button onClick={handleRegister}>Register</button>                
+          &nbsp;
+          <button onClick={forgotPassword}>Forgot Password</button>
+      </form>
+    </div>
+  );
+}

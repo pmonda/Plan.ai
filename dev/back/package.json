@@ -1,0 +1,12 @@
+{
+    "name": "plan-io-backend",
+    "author": "pmonda",
+    "version": "1.0.0",
+    "description": "A backend API for Plan.io",
+    "dependencies": {
+        "aws-sdk": "^2.1691.0",
+        "bcryptjs": "^2.4.3",
+        "jsonwebtoken": "^9.0.2",
+        "plan-io-backend": "file:"
+    }
+}
