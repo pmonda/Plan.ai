@@ -31,8 +31,7 @@
     "prestart": "set NODE_OPTIONS=--openssl-legacy-provider",
     "start": "react-scripts start",
     "build": "react-scripts --openssl-legacy-provider build",
-    "test": "react-scripts test",
-    "test:coverage": "npm test -- --env=jsdom --coverage",
+    "test": "python ../../back/sel.py",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
