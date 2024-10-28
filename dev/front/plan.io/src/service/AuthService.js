@@ -1,28 +1,23 @@
-const user = null;
-const token = null;
+    const user = null;
+    const token = null;
 
-module.exports = {
-    getUser : function() {
+    export function getUser() {
         const user = sessionStorage.getItem('user');
-        if (user === 'undefined'  || !user) {
+        if (user === 'undefined' || !user) {
             return null;
         }
         else {
             return JSON.parse(user);
         }
-    },
-
-    getToken : function() {
+    }
+    export function getToken() {
         return sessionStorage.getItem('token');
-    },
-
-    setUserSession : function() {
+    }
+    export function setUserSession() {
         sessionStorage.setItem('user', JSON.stringify(user));
         sessionStorage.setItem('token', token);
-    },
-
-    resetUserSession : function() {
+    }
+    export function resetUserSession() {
         sessionStorage.removeItem('user');
         sessionStorage.removeItem('token');
     }
-}
