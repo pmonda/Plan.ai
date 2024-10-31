@@ -46,7 +46,7 @@ const Register = () => {
       <form id="login-register-container" onSubmit={submitHandler}>
         <h1>Register</h1>
         <p>Welcome to Plan.io!</p><p>Sign up to get started!</p>
-        <input placeholder='username' type="text" value={username} onChange={event => setUsername(event.target.value)} /> <br/>
+        <input placeholder='email' type="email" value={username} onChange={event => setUsername(event.target.value)} /> <br/>
         <input placeholder='password' type="password" value={password} onChange={event => setPassword(event.target.value)} /> <br/>
         <input placeholder='re-enter password' type="password" value={passwordConfirm} onChange={event => setPasswordConfirm(event.target.value)}></input>
         <input type="submit" value="Register" />
