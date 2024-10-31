@@ -46,13 +46,16 @@ jobs:
       
       # Build the project (if applicable)
       - name: Build Project
-        run: NODE_OPTIONS=--openssl-legacy-provider npm run build --if-present
+        run: npm run build
 
       # Run tests
       # - name: Run Tests
       #   run: npm test
       - name: Coverage Test
-        run: npm test -- --env=jsdom --coverage
+        run: |
+              pip install selenium
+              pip install colorama
+              npm test
 
       # Upload test results (optional)
       # - name: Upload Test Results

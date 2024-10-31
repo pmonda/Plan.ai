@@ -1,5 +1,5 @@
-const user = null;
-const token = null;
+    const user = null;
+    const token = null;
 
 export function getUser() {
     const user = sessionStorage.getItem('user');
