@@ -59,15 +59,12 @@
       "last 1 safari version"
     ]
   },
-<<<<<<< HEAD
   "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
   "main": "index.js",
   "keywords": [],
   "author": "",
-  "license": "ISC"
-=======
+  "license": "ISC",
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
->>>>>>> origin/main
 }
