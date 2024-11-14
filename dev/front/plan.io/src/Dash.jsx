@@ -257,15 +257,28 @@ const extractTasks = () => {
       setIsProfileModalOpen(false);
     };
 
-  const handleTimerComplete = useCallback(() => {
-  const completedSession = workTime / 60;
-  addTimeToChart(completedSession);
+  const handleTimerComplete = useCallback((completedMinutes) => {
+
+  // const completedSession = workTime / 60;
+
+  setRecentTimers((prevTimers) => [
+    ...prevTimers,
+    {
+      startTime: startTime.toLocaleTimeString(),
+      endTime: new Date().toLocaleTimeString(),
+      duration: `${completedMinutes} minutes`,
+      type: 'work', // Specify that it was a work session
+    },
+  ]);
+
+  // If you're using a chart library, you can update the chart here
+  console.log(`Added ${completedMinutes} minutes to the chart.`);
 
   alert("Work session completed! Timer reset.");
 
   setIsRunning(false);
   setTimeLeft(workTime);
-  }, [workTime, addTimeToChart]); // List dependencies used inside the function
+  }, [workTime, startTime]); // List dependencies used inside the function
   
   useEffect(() => {
     let timer = null;
@@ -339,20 +352,7 @@ const extractTasks = () => {
       return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     };
 
-    const addTimeToChart = (completedMinutes) => {
-      setRecentTimers((prevTimers) => [
-        ...prevTimers,
-        {
-          startTime: startTime.toLocaleTimeString(),
-          endTime: new Date().toLocaleTimeString(),
-          duration: `${completedMinutes} minutes`,
-          type: 'work', // Specify that it was a work session
-        },
-      ]);
     
-      // If you're using a chart library, you can update the chart here
-      console.log(`Added ${completedMinutes} minutes to the chart.`);
-    };
 
     // Record the timer session with actual duration
     const recordTimer = (endTime) => {
