@@ -1,4 +1,4 @@
-  import React, { useState, useEffect} from 'react';
+  import React, { useState, useEffect, useCallback} from 'react';
   import './Dash.css'; // Import the updated CSS file
   import quotesDB from './quotesDB'; // Import the quotes
   import Modal from './Modal'; // Import the existing Modal component for logout
