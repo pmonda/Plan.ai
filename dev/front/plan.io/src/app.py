@@ -41,17 +41,20 @@ def process_text():
 
     # Prepare the chat request to the Ollama model with the text included in the prompt
     prompt = f"""
-    Given the following instructions, please generate 5-6 detailed and actionable steps, along with an estimated time for each step, designed for a beginner-intermediate level student. Your guidance should be broken down into specific, relevant steps tailored to the assignment, rather than generalizing it into a single task. Avoid writing ANY code as this can cause trouble for the student, but ensure that each step is clear and can be followed logically. Please also do not include the answers in the description, only guide the user.
+    Given the following assignment, please generate 5-6 detailed and actionable steps, along with an estimated time for each step, designed for a beginner-intermediate level student. Your guidance should be broken down into specific, relevant steps tailored to the assignment, rather than generalizing it into a single task. Avoid writing ANY code as this can cause trouble for the student, but ensure that each step is clear and can be followed logically. Please also do not include the answers in the description, only guide the user.
+    Disregard any terms that have negative connotation not directly related to the core functionality of the assignment.
 
     At the top, state the assignment name or number, and if available, include the due date beneath. Each step must follow this format:
 
-    'Step (Step Number) - (Step Title) (Amount of time to complete)'
+    'Step Step Number : Task Name - Estimated Time in min'
     - (One line description starting with a hyphen)
 
-    For example:
-    Step 1 - Research the topic (30 minutes)
+    Follow this example:
+    Step 1 : Research the topic - 30 min
     - Gather key resources and take notes on important aspects of the topic.
-
+    
+    Step 2 : 
+    Continue...
     Make sure the format is strictly adhered to and does not deviate. Make absolutely certain that each step in the section begins with the word Step and then the formatting, as this is the highest priority for our users to extract their tasks. Each description must be exactly one line, start with a hyphen, and provide concise, actionable guidance for the student.
     {text}
     """
@@ -87,4 +90,4 @@ def process_text():
     return jsonify({'modifiedText': modified_text_with_bold})
 
 if __name__ == '__main__':
-    app.run(port=3000)  # Run the app on port 3000
+    app.run(port=3000)

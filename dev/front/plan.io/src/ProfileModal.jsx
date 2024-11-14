@@ -8,11 +8,16 @@ const ProfileModal = ({ isOpen, onClose }, username) => {
   const [passwordResetAnswer, setPasswordResetAnswer] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [timeZone, setTimeZone] = useState("");
+<<<<<<< HEAD
+  const location = useLocation();
+  const email = location.state.email;
+
+=======
   const email = useLocation().state.username;
   // Validation function for email
+>>>>>>> origin/main
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
     return re.test(email);
   };
 
