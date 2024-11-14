@@ -69,17 +69,7 @@ Welcome to **Plan.IO**! This manual provides detailed guidance on using the feat
 
 1. **Enable Notifications**:
    - Set up email or push notifications for upcoming deadlines to stay on top of tasks.
-
-### Adaptive Learning
-
-1. **AI-Driven Time Estimates**:
-   - Plan.IO uses adaptive learning to refine time predictions based on your past behavior. Over time, it offers more accurate time estimates for similar tasks.
-
-2. **Adjust Learning Preferences**:
-   - In **Settings**, you can enable or disable adaptive learning according to your needs.
-
 ---
-
 ## Settings
 
 1. **Access Settings**:
@@ -101,7 +91,7 @@ Welcome to **Plan.IO**! This manual provides detailed guidance on using the feat
 
 ## Support
 
-For assistance, reach out to [Plan.IO Support](mailto:support@plan.io). You can also check out our GitHub repository for more information and to report issues.
+For assistance, reach out to [Plan.IO Support](mailto:noreply@planio.com). You can also check out our GitHub repository for more information and to report issues.
 
 Happy planning! 🎉
 
