@@ -270,7 +270,7 @@ const extractTasks = () => {
       }
 
       return () => clearInterval(timer); // Cleanup timer
-    }, [isRunning, timeLeft]);
+    }, [isRunning, timeLeft, handleTimerComplete]);
 
     const handleTimerComplete = () => {
       const completedSession = workTime / 60; 
