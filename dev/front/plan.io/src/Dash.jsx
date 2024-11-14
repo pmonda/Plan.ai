@@ -11,8 +11,7 @@
     const location = useLocation();
     const [quote, setQuote] = useState("");
     const [author, setAuthor] = useState("");
-    const username = location.state.username;
-    const email = location.state.email;
+    const username = location.state.username; //this is an email type
     const [isModalOpen, setIsModalOpen] = useState(false); // State for logout modal
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false); // State for settings modal
     const [uploadedText, setUploadedText] = useState("Please Upload a PDF to begin"); // State for uploaded text 
