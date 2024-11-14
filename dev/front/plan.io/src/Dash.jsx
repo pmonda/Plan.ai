@@ -257,31 +257,28 @@ const extractTasks = () => {
       setIsProfileModalOpen(false);
     };
 
-    const handleTimerComplete = () => {
-      const completedSession = workTime / 60; 
-      addTimeToChart(completedSession); 
-      
-      alert("Work session completed! Timer reset.");
-    
-      setIsRunning(false);
-      setTimeLeft(workTime); 
-    };    
-    
-    // Pomodoro Timer Logic
+  const handleTimerComplete = useCallback(() => {
+  const completedSession = workTime / 60;
+  addTimeToChart(completedSession);
 
-    useEffect(() => {
-      let timer = null;
-      if (isRunning && timeLeft > 0) {
-        timer = setInterval(() => {
-          setTimeLeft(prevTime => prevTime - 1);
-        }, 1000);
-      } else if (timeLeft === 0 && isRunning) {
-        handleTimerComplete();
-      }
+  alert("Work session completed! Timer reset.");
 
-      return () => clearInterval(timer); // Cleanup timer
-    }, [isRunning, timeLeft, handleTimerComplete]);
-
+  setIsRunning(false);
+  setTimeLeft(workTime);
+  }, [workTime, addTimeToChart]); // List dependencies used inside the function
+  
+  useEffect(() => {
+    let timer = null;
+    if (isRunning && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft(prevTime => prevTime - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && isRunning) {
+      handleTimerComplete();
+    }
+  
+    return () => clearInterval(timer); // Cleanup timer
+  }, [isRunning, timeLeft, handleTimerComplete]);
     // Break Timer Logic
     useEffect(() => {
       let breakTimer = null;
