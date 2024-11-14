@@ -11,6 +11,7 @@
     "@testing-library/user-event": "^13.5.0",
     "axios": "^1.7.7",
     "chart.js": "^3.9.1",
+    "concurrently": "^9.1.0",
     "dot-env": "^0.0.1",
     "dotenv": "^16.4.5",
     "express": "^4.21.1",
@@ -30,7 +31,9 @@
   },
   "scripts": {
     "prestart": "set NODE_OPTIONS=--openssl-legacy-provider",
-    "start": "react-scripts start",
+    "start": "concurrently \"npm run start-frontend\" \"npm run start-backend\"",
+    "start-backend": "cd C:\\Users\\kpedd\\Documents\\GitHub\\plan.io\\dev\\front\\plan.io\\src && python app.py",
+    "start-frontend": "react-scripts start",  
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test:coverage": "npm test -- --env=jsdom --coverage",

@@ -112,13 +112,12 @@
   return dueDates.length > 0 ? dueDates : null; // Return dates or null if none found
 };
 
-// Update the extractTasks function to handle due dates and task extraction
 const extractTasks = () => {
   const stepPattern = /step\s+(\d+):?\s*([^.\n]+) - ([^.\n]+)/gi;
   const matches = [...uploadedText.matchAll(stepPattern)];
 
-  // Extract due dates and bullet points, handling cases where they might be null
-  const dueDates = extractDueDates(uploadedText);
+  // Extract due dates and bullet points, ensuring default values if they are null or undefined
+  const dueDates = extractDueDates(uploadedText) || [];
   const bulletPoints = extractBulletPoints(uploadedText) || [];
   
   if (dueDates.length === 0) {
@@ -130,7 +129,6 @@ const extractTasks = () => {
 
   // Calculate task interval only if there are steps and a final due date
   const totalSteps = matches.length;
-  const daysPerTask = Math.floor(7 / totalSteps);
   const daysUntilFinalDue = Math.floor((finalDueDate - new Date()) / (1000 * 60 * 60 * 24));
   const taskDaysInterval = totalSteps > 0 ? Math.floor(daysUntilFinalDue / totalSteps) : 0;
 
@@ -141,31 +139,28 @@ const extractTasks = () => {
       .trim();
 
     const stepNumber = match[1].trim();
-    const formattedTitle = `Step ${stepNumber}${title}`;
+    const formattedTitle = `Step ${stepNumber}: ${title}`;
     const estimatedTime = match[3] || "No estimated time found";
-
 
     // Calculate due date for each task
     const taskDueDate = new Date(finalDueDate);
-    taskDueDate.setDate(taskDueDate.getDate() - (daysPerTask * (totalSteps - index - 1)));
+    taskDueDate.setDate(taskDueDate.getDate() - (taskDaysInterval * (totalSteps - index - 1)));
     const dueDateFormatted = taskDueDate.toISOString().split('T')[0];
 
     // Associate bullet points as task descriptions if available
-    const bulletPoints = extractBulletPoints(uploadedText);
     const description = (bulletPoints && bulletPoints.length > index ? bulletPoints[index] : "No description found")
       .replace(/<\/?b>/gi, '') // Remove <b> tags
       .replace(/\*\*$/, '') // Remove trailing **
       .trim();
 
-
-      return {
-        task: formattedTitle,
-        description: description,
-        dueDate: dueDateFormatted,
-        estimatedTime: estimatedTime,
-        emoji: '📥',
-        completed: false,
-      };
+    return {
+      task: formattedTitle,
+      description: description,
+      dueDate: dueDateFormatted,
+      estimatedTime: estimatedTime,
+      emoji: '📥',
+      completed: false,
+    };
   });
 
   if (extractedTasks.length) {
@@ -176,6 +171,7 @@ const extractTasks = () => {
     console.log("No tasks extracted.");
   }
 };
+
     
     const handleEditTask = (index) => {
       const taskToEdit = tasks[index];
