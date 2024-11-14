@@ -257,6 +257,16 @@ const extractTasks = () => {
       setIsProfileModalOpen(false);
     };
 
+    const handleTimerComplete = () => {
+      const completedSession = workTime / 60; 
+      addTimeToChart(completedSession); 
+      
+      alert("Work session completed! Timer reset.");
+    
+      setIsRunning(false);
+      setTimeLeft(workTime); 
+    };    
+    
     // Pomodoro Timer Logic
 
     useEffect(() => {
@@ -271,16 +281,6 @@ const extractTasks = () => {
 
       return () => clearInterval(timer); // Cleanup timer
     }, [isRunning, timeLeft, handleTimerComplete]);
-
-    const handleTimerComplete = () => {
-      const completedSession = workTime / 60; 
-      addTimeToChart(completedSession); 
-      
-      alert("Work session completed! Timer reset.");
-    
-      setIsRunning(false);
-      setTimeLeft(workTime); 
-    };    
 
     // Break Timer Logic
     useEffect(() => {
