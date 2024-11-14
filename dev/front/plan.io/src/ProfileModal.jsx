@@ -2,15 +2,20 @@ import React, { useState } from 'react';
 import './ProfileModal.css'; // Add your CSS styles
 import { useLocation } from 'react-router-dom';
 
-const ProfileModal = ({ isOpen, onClose }) => {
+const ProfileModal = ({ isOpen, onClose }, username) => {
   const [setEmail] = useState("");
   const [passwordResetQuestion, setPasswordResetQuestion] = useState("");
   const [passwordResetAnswer, setPasswordResetAnswer] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [timeZone, setTimeZone] = useState("");
+<<<<<<< HEAD
   const location = useLocation();
   const email = location.state.email;
 
+=======
+  const email = useLocation().state.username;
+  // Validation function for email
+>>>>>>> origin/main
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return re.test(email);
