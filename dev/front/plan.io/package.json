@@ -33,18 +33,10 @@
   },
   "scripts": {
     "prestart": "set NODE_OPTIONS=--openssl-legacy-provider",
-<<<<<<< HEAD
-    "start": "concurrently \"npm run start-frontend\" \"npm run start-backend\"",
-    "start-backend": "cd C:\\Users\\kpedd\\Documents\\GitHub\\plan.io\\dev\\front\\plan.io\\src && python app.py",
-    "start-frontend": "react-scripts start",  
+    "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "test:coverage": "npm test -- --env=jsdom --coverage",
-=======
-    "start": "react-scripts start",
-    "build": "react-scripts --openssl-legacy-provider build",
-    "test": "python ../../back/sel.py",
->>>>>>> origin/main
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
@@ -64,16 +56,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-  },
-<<<<<<< HEAD
-  "description": "This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).",
-  "main": "index.js",
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
-=======
-  "devDependencies": {
-    "@babel/plugin-proposal-private-property-in-object": "^7.21.11"
   }
->>>>>>> origin/main
 }
