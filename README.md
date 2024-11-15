@@ -54,7 +54,7 @@ Plan.IO’s AI adapts over time, offering increasingly precise time estimates ba
 If you encounter any issues:
 - **Refresh the Page**: Sometimes, a simple refresh can resolve minor bugs.
 - **Clear Cache**: If issues persist, clear your browser’s cache.
-- **Contact Support**: Still facing issues? Reach out to [Plan.IO Support](mailto:support@plan.io).
+- **Contact Support**: Still facing issues? Reach out to [Plan.IO Support](mailto:noreply.planio@gmail.com).
 
 ---
 
@@ -79,10 +79,17 @@ We welcome contributions to Plan.IO! Here’s how you can get started:
 
 Please follow our contribution guidelines and respect the code of conduct.
 
+### Contribution Guidelines
+* Make a branch as described above off the 'experimental' branch
+* Describe your Pull Request with good detail and structurd format like below:
+  ![image](https://github.com/user-attachments/assets/e05f6182-28c0-4863-8a9a-f3d5d56e7155)
+  *Credit: https://opensource.creativecommons.org/contributing-code/pr-guidelines/*
+* Request review from an approved reviewer (i.e. Owners of this repository)   
+
 ---
 
 # 🚨 Support
 
-Encountered an issue? Have questions? Please open an issue on GitHub or contact our support team at [Plan.IO Support](mailto:support@plan.io).
+Encountered an issue? Have questions? Please open an issue on GitHub or contact our support team at [Plan.IO Support](mailto:noreply.planio@gmail.com).
 
 **Happy planning! 🎉**
