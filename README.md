@@ -81,7 +81,7 @@ We welcome contributions to Plan.IO! Here’s how you can get started:
 
 Please follow our contribution guidelines and respect the code of conduct.
 
-### Contribution Guidelines
+## Contribution Guidelines
 * Make a branch as described above off the 'experimental' branch but ensure to pull off the main branch using: `git pull origin main`
    
 * Describe your Pull Request with good detail and structurd format like below:
