@@ -91,7 +91,7 @@ Welcome to **Plan.IO**! This manual provides detailed guidance on using the feat
 
 ## Support
 
-For assistance, reach out to [Plan.IO Support](mailto:noreply@planio.com). You can also check out our GitHub repository for more information and to report issues.
+For assistance, reach out to [Plan.IO Support](mailto:noreply.planio@gmail.com). You can also check out our GitHub repository for more information and to report issues.
 
 Happy planning! 🎉
 
