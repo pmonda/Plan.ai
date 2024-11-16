@@ -1,6 +1,8 @@
 # 🚀 Plan.IO - Your Personalized Academic Planner for Coding Assignments
 
-![Plan.IO Banner](dev\front\plan.io\src\assets\logo_banner2.png)
+<p align="center">
+   <img src="https://github.com/pmonda/plan.io/blob/main/dev/front/plan.io/src/assets/logo_banner2.png"/>
+</p>
 
 Plan.IO is an advanced productivity tool crafted to assist **Purdue University students** in managing academic workloads. Designed to simplify task management, Plan.IO breaks down assignments, provides personalized time estimates, and enables students to balance academic, work, and social responsibilities.
 
@@ -75,16 +77,28 @@ We welcome contributions to Plan.IO! Here’s how you can get started:
     ```bash
     git push origin feature/your-feature
     ```
-5. **Open a pull request**.
+5. **Open a Pull Request (PR)**.
 
 Please follow our contribution guidelines and respect the code of conduct.
 
 ### Contribution Guidelines
-* Make a branch as described above off the 'experimental' branch
+* Make a branch as described above off the 'experimental' branch but ensure to pull off the main branch using: `git pull origin main`
+   
 * Describe your Pull Request with good detail and structurd format like below:
-  ![image](https://github.com/user-attachments/assets/e05f6182-28c0-4863-8a9a-f3d5d56e7155)
-  *Credit: https://opensource.creativecommons.org/contributing-code/pr-guidelines/*
+  <img src="https://github.com/user-attachments/assets/e05f6182-28c0-4863-8a9a-f3d5d56e7155" style="width:500px"></img>
+  
+ *Credit: https://opensource.creativecommons.org/contributing-code/pr-guidelines/*
+
 * Request review from an approved reviewer (i.e. Owners of this repository)   
+
+* Document your code clearly using comments and use function/variable names that best represent the function/variable's purpose.
+
+* Upon receiving feedback from a reviewer, implement your changes and re-push your code. Opening a new PR is not necessary.
+
+
+*Guidelines Inspired by: https://opensource.creativecommons.org/contributing-code/pr-guidelines/*
+
+Questions? Email us at [Plan.IO Support](mailto:noreply.planio@gmail.com).
 
 ---
 
