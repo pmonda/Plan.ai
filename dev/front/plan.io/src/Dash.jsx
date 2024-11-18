@@ -430,7 +430,7 @@ async function processTextWithNLP() {
   setUploadedText("Processing PDF. Please give our systems time to fully process your assignment!")
   try {
     console.log("Processing with extracted text:", extractedText);
-    const response = await fetch('http://localhost:3000/process-text', {
+    const response = await fetch('http://localhost:5000/process-text', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'

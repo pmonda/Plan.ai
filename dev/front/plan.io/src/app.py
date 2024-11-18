@@ -90,4 +90,4 @@ def process_text():
     return jsonify({'modifiedText': modified_text_with_bold})
 
 if __name__ == '__main__':
-    app.run(port=3000)
+    app.run(port=5000)
