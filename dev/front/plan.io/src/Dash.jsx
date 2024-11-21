@@ -138,7 +138,7 @@ const extractTasks = () => {
       .trim();
 
     const stepNumber = match[1].trim();
-    const formattedTitle = `Step ${stepNumber}: ${title}`;
+    const formattedTitle = `Step ${stepNumber}${title}`;
     const estimatedTime = match[3] || "No estimated time found";
 
     // Calculate due date for each task
@@ -425,11 +425,14 @@ function extractTextFromPDF(event) {
           setUploadedText("Failed to extract text from PDF. Please wait 2-3 mins and try again.");
       });
 }
-
 async function processTextWithNLP() {
-  setUploadedText("Processing PDF. Please give our systems time to fully process your assignment!")
+  setUploadedText("Processing PDF. Please give our systems time to fully process your assignment!");
+  
   try {
     console.log("Processing with extracted text:", extractedText);
+
+    // Update fetch URL to point to Flask backend running on port 5000
+    
     const response = await fetch('http://localhost:5000/process-text', {
           method: 'POST',
           headers: {
