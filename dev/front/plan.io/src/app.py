@@ -14,7 +14,6 @@ load_dotenv()
 
 # Configure OpenAI API Key
 openai.api_key = os.getenv('OPENAI_API_KEY')
-print("KEY", os.getenv('OPENAI_API_KEY'))
 
 def bold_key_terms(text):
     """
