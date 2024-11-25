@@ -194,6 +194,34 @@ body {
   cursor: pointer;
 }
 
+.dashboard-section {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+  max-width: 100%;
+  overflow-x: hidden;
+}
+
+.session-log {
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 16px;
+  background-color: #f9f9f9;
+  margin-bottom: 16px;
+}
+
+.chart-section {
+  overflow: scroll; /* Prevent content from overflowing */
+  max-width: 100%; /* Ensure it doesn't go beyond the container */
+  padding: 10px;
+}
+
+.chart-section canvas {
+  max-width: 100%; /* Ensure the chart resizes properly */
+  height: auto;
+}
+
+
 .task-list li button:hover {
   background-color: #cc0000;
 }
