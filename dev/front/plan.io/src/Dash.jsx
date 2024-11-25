@@ -504,6 +504,7 @@ async function processTextWithNLP() {
     console.log("Processing with extracted text:", extractedText);
 
     // Update fetch URL to point to Flask backend running on port 5000
+    
     const response = await fetch('http://localhost:5000/process-text', {
           method: 'POST',
           headers: {

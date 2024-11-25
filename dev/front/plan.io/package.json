@@ -38,7 +38,7 @@
   "scripts": {
     "prestart": "set NODE_OPTIONS=--openssl-legacy-provider",
     "start": "concurrently \"npm run start-frontend\" \"npm run start-backend\"",
-    "start-backend": "cd C:\\Users\\kpedd\\Documents\\GitHub\\plan.io\\dev\\front\\plan.io\\src && python app.py",
+    "start-backend": "cd src && python app.py",
     "start-frontend": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
