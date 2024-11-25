@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './ProfileModal.css'; // Add your CSS styles
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 
 const ProfileModal = ({ isOpen, onClose, updateUsername }) => {
   const [email, setEmail] = useState("");
@@ -9,7 +9,6 @@ const ProfileModal = ({ isOpen, onClose, updateUsername }) => {
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [timeZone, setTimeZone] = useState("");
   const location = useLocation();
-  const navigate = useNavigate();
 
   // Initialize email with current username from location.state
   React.useEffect(() => {

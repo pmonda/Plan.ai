@@ -433,7 +433,7 @@ async function processTextWithNLP() {
 
     // Update fetch URL to point to Flask backend running on port 5000
     
-    const response = await fetch('http://localhost:5000/process-text', {
+    const response = await fetch('http://3.93.21.46:5000/process-text', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
