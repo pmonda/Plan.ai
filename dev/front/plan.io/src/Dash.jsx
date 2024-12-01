@@ -1,4 +1,4 @@
-  import React, { useState, useEffect} from 'react';
+  import React, { useState, useEffect, useCallback} from 'react';
   import './Dash.css'; // Import the updated CSS file
   import quotesDB from './quotesDB'; // Import the quotes
   import Modal from './Modal'; // Import the existing Modal component for logout
@@ -7,12 +7,11 @@
   import { useLocation } from 'react-router-dom';
   import pdfToText from 'react-pdftotext'
 
-  export default function Dashboard(props) {
+  export default function Dashboard() {
     const location = useLocation();
     const [quote, setQuote] = useState("");
     const [author, setAuthor] = useState("");
-    const username = location.state.username;
-    const streak = 0;
+    const username = location.state.username; //this is an email type
     const [isModalOpen, setIsModalOpen] = useState(false); // State for logout modal
     const [isSettingsModalOpen, setIsSettingsModalOpen] = useState(false); // State for settings modal
     const [uploadedText, setUploadedText] = useState("Please Upload a PDF to begin"); // State for uploaded text 
@@ -31,6 +30,7 @@
     const [tasks, setTasks] = useState([]);
     const [newTask, setNewTask] = useState("");
     const [description, setDescription] = useState('');
+    const [estimatedTime, setestimatedTime] = useState('');
     const [dueDate, setDueDate] = useState('');
     const [selectedEmoji, setSelectedEmoji] = useState("😊"); // Default emoji
     const emojis = [
@@ -62,10 +62,9 @@
         fileInput.value = ""; // Reset the file input field
       }
     };
-    
 
     const handleAddTask = () => {
-      if (newTask.trim() && description.trim() && dueDate.trim()) {
+      if (newTask.trim() && description.trim() && dueDate.trim() && estimatedTime.trim()) {
         setTasks([
           ...tasks,
           {
@@ -73,6 +72,7 @@
             description: description, // Add description to the task
             dueDate: dueDate,         // Add dueDate to the task
             completed: false,
+            estimatedTime: estimatedTime,
             emoji: selectedEmoji
           }
         ]);
@@ -111,39 +111,53 @@
   return dueDates.length > 0 ? dueDates : null; // Return dates or null if none found
 };
 
-// Update the extractTasks function to handle due dates and task extraction
-
 const extractTasks = () => {
-  const stepPattern = /step\s+(\d+):?\s*([^.\n]+)/gi;
+  const stepPattern = /step\s+(\d+):?\s*([^.\n]+) - ([^.\n]+)/gi;
   const matches = [...uploadedText.matchAll(stepPattern)];
 
-  // Extract due dates and bullet points from the uploaded text
-  const dueDates = extractDueDates(uploadedText);
-  const bulletPoints = extractBulletPoints(uploadedText);
+  // Extract due dates and bullet points, ensuring default values if they are null or undefined
+  const dueDates = extractDueDates(uploadedText) || [];
+  const bulletPoints = extractBulletPoints(uploadedText) || [];
+  
+  if (dueDates.length === 0) {
+    console.error("No due dates found in the uploaded text.");
+  }
+
+  // Set the final due date from the last due date if available
+  const finalDueDate = dueDates.length > 0 ? new Date(dueDates[dueDates.length - 1]) : new Date(); 
+
+  // Calculate task interval only if there are steps and a final due date
+  const totalSteps = matches.length;
+  const daysUntilFinalDue = Math.floor((finalDueDate - new Date()) / (1000 * 60 * 60 * 24));
+  const taskDaysInterval = totalSteps > 0 ? Math.floor(daysUntilFinalDue / totalSteps) : 0;
 
   const extractedTasks = matches.map((match, index) => {
     const title = match[2]
       .replace(/<\/?b>/gi, '') // Remove <b> tags
       .replace(/\*\*$/, '') // Remove trailing **
-      .trim(); // Trim whitespace
+      .trim();
 
     const stepNumber = match[1].trim();
     const formattedTitle = `Step ${stepNumber}${title}`;
+    const estimatedTime = match[3] || "No estimated time found";
 
-    // Associate due date if available (use index to pair steps with due dates)
-    const dueDate = dueDates && dueDates[index] ? dueDates[index] : "No due date found";
+    // Calculate due date for each task
+    const taskDueDate = new Date(finalDueDate);
+    taskDueDate.setDate(taskDueDate.getDate() - (taskDaysInterval * (totalSteps - index - 1)));
+    const dueDateFormatted = taskDueDate.toISOString().split('T')[0];
 
     // Associate bullet points as task descriptions if available
     const description = (bulletPoints && bulletPoints.length > index ? bulletPoints[index] : "No description found")
-    .replace(/<\/?b>/gi, '') // Remove <b> tags
-    .replace(/\*\*$/, '') // Remove trailing **
-    .trim();;
+      .replace(/<\/?b>/gi, '') // Remove <b> tags
+      .replace(/\*\*$/, '') // Remove trailing **
+      .trim();
 
     return {
       task: formattedTitle,
-      description: description, // Include bullet points as descriptions
-      dueDate: dueDate, // Include due date
-      emoji: '📥', // Download emoji
+      description: description,
+      dueDate: dueDateFormatted,
+      estimatedTime: estimatedTime,
+      emoji: '📥',
       completed: false,
     };
   });
@@ -156,6 +170,7 @@ const extractTasks = () => {
     console.log("No tasks extracted.");
   }
 };
+
     
     const handleEditTask = (index) => {
       const taskToEdit = tasks[index];
@@ -163,6 +178,7 @@ const extractTasks = () => {
       setDescription(taskToEdit.description); // Set the description for editing
       setDueDate(taskToEdit.dueDate);         // Set the due date for editing
       setSelectedEmoji(taskToEdit.emoji);
+      setestimatedTime(taskToEdit.estimatedTime);
       setIsEditing(true);
       setEditIndex(index);
     };
@@ -175,7 +191,8 @@ const extractTasks = () => {
         task: newTask,
         description: description, // Update description
         dueDate: dueDate,         // Update dueDate
-        emoji: selectedEmoji
+        emoji: selectedEmoji,
+        estimatedTime: estimatedTime
       };
       setTasks(updatedTasks);
       resetTaskInput();
@@ -186,6 +203,7 @@ const extractTasks = () => {
       setDescription(""); // Reset description
       setDueDate("");     // Reset dueDate
       setSelectedEmoji("😊");
+      setestimatedTime("");
       setIsEditing(false);
       setEditIndex(null);
     };
@@ -239,21 +257,41 @@ const extractTasks = () => {
       setIsProfileModalOpen(false);
     };
 
-    // Pomodoro Timer Logic
-    useEffect(() => {
-      let timer = null;
-      if (isRunning && timeLeft > 0) {
-        timer = setInterval(() => {
-          setTimeLeft(prevTime => prevTime - 1);
-        }, 1000);
-      } else if (timeLeft === 0 && isBreakRunning) {
-        setIsRunning(false);
-        alert("Work session completed! Time for a break."); // Alert when work timer is complete
-      }
+  const handleTimerComplete = useCallback((completedMinutes) => {
 
-      return () => clearInterval(timer); // Cleanup timer
-  }, [isRunning, isBreakRunning, timeLeft]);
+  // const completedSession = workTime / 60;
 
+  setRecentTimers((prevTimers) => [
+    ...prevTimers,
+    {
+      startTime: startTime.toLocaleTimeString(),
+      endTime: new Date().toLocaleTimeString(),
+      duration: `${completedMinutes} minutes`,
+      type: 'work', // Specify that it was a work session
+    },
+  ]);
+
+  // If you're using a chart library, you can update the chart here
+  console.log(`Added ${completedMinutes} minutes to the chart.`);
+
+  alert("Work session completed! Timer reset.");
+
+  setIsRunning(false);
+  setTimeLeft(workTime);
+  }, [workTime, startTime]); // List dependencies used inside the function
+  
+  useEffect(() => {
+    let timer = null;
+    if (isRunning && timeLeft > 0) {
+      timer = setInterval(() => {
+        setTimeLeft(prevTime => prevTime - 1);
+      }, 1000);
+    } else if (timeLeft === 0 && isRunning) {
+      handleTimerComplete();
+    }
+  
+    return () => clearInterval(timer); // Cleanup timer
+  }, [isRunning, timeLeft, handleTimerComplete]);
     // Break Timer Logic
     useEffect(() => {
       let breakTimer = null;
@@ -281,6 +319,7 @@ const extractTasks = () => {
       if (isRunning) {
         const endTime = new Date();
         recordTimer(endTime); // Pass the end time to the recordTimer function
+
       }
       setIsRunning(false);
       setTimeLeft(workTime);
@@ -313,6 +352,8 @@ const extractTasks = () => {
       return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     };
 
+    
+
     // Record the timer session with actual duration
     const recordTimer = (endTime) => {
       const duration = Math.floor((endTime - startTime) / 1000 / 60); // Calculate duration in minutes
@@ -334,6 +375,14 @@ const extractTasks = () => {
       setTimeLeft(newWorkTime); // Update the displayed work time
       setBreakTimeLeft(newBreakTime); // Update the displayed break time
     };
+    const handleEstimatedTimeClick = (estimatedTime) => {
+      const minutes = parseInt(estimatedTime, 10); // Convert the estimated time to an integer
+      if (!isNaN(minutes)) {
+        setWorkTime(minutes * 60); // Set the work time in seconds
+        setTimeLeft(minutes * 60); // Set the timer display in seconds
+      }
+    };
+    
 
 function extractTextFromPDF(event) {
   setIsExportDisabled(false);
@@ -376,12 +425,15 @@ function extractTextFromPDF(event) {
           setUploadedText("Failed to extract text from PDF. Please wait 2-3 mins and try again.");
       });
 }
-
 async function processTextWithNLP() {
-  setUploadedText("Processing PDF. Please give our systems time to fully process your assignment!")
+  setUploadedText("Processing PDF. Please give our systems time to fully process your assignment!");
+  
   try {
     console.log("Processing with extracted text:", extractedText);
-    const response = await fetch('http://localhost:3000/process-text', {
+
+    // Update fetch URL to point to Flask backend running on port 5000
+    
+    const response = await fetch('http://3.93.21.46:5000/process-text', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
@@ -430,16 +482,6 @@ async function processTextWithNLP() {
         <div className="dashboard-content">
           {/* Dashboard sections */}
           <div className="dashboard-sections">
-            {/* Current Streak */}
-            <section className="dashboard-section current-streak-section">            
-              <h2>Current Streak🔥</h2>      
-              &nbsp;      
-              &nbsp;           
-              &nbsp;
-              <div className="current-streak">
-                <div className="streak-number">{streak}</div> 
-              </div>
-            </section>
 
             {/* Pomodoro Timer Section */}
             <section className="dashboard-section break-section">
@@ -504,6 +546,13 @@ async function processTextWithNLP() {
                 value={newTask}
                 onChange={(e) => setNewTask(e.target.value)}
               />
+
+              <input
+                    type="number"
+                    placeholder="Estimated Time (in minutes)"
+                    value={estimatedTime}
+                    onChange={(e) => setestimatedTime(e.target.value)} // Fix typo: setestimatedTime -> setEstimatedTime
+                  />
               
               <input
                 type="text"
@@ -538,6 +587,7 @@ async function processTextWithNLP() {
                     <th>Description</th> {/* New Description column */}
                     <th>Due Date</th>     {/* New Due Date column */}
                     <th>Completed</th>
+                    <th>Time (min)</th>
                     <th>Actions</th>
                   </tr>
                 </thead>
@@ -555,6 +605,13 @@ async function processTextWithNLP() {
                           onChange={() => handleTaskToggle(index)}
                         />
                       </td>
+
+                      <td 
+                        style={{ color: 'blue', cursor: 'pointer' }} 
+                        onClick={() => handleEstimatedTimeClick(task.estimatedTime)}
+                      >
+                        {task.estimatedTime} 
+                      </td>                      
                       <td className="actions-column">
                         <button onClick={() => handleEditTask(index)}>Modify&nbsp;</button>                
                         <button 

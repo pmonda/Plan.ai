@@ -43,13 +43,6 @@ export default function SettingsModal({ isOpen, onClose, isLightMode, toggleThem
             />
           </label>
           <br />
-          <label>
-            Notification Preferences: &nbsp;
-            <select>
-              <option>Email</option>
-              <option>SMS</option>
-            </select>
-          </label>
           <div className="settings-modal-buttons">
             <button onClick={onClose}>Close</button>&nbsp;
             <button onClick={handleSaveChanges}>Save Changes</button>

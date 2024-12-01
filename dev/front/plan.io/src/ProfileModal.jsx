@@ -2,17 +2,24 @@ import React, { useState } from 'react';
 import './ProfileModal.css'; // Add your CSS styles
 import { useLocation } from 'react-router-dom';
 
-const ProfileModal = ({ isOpen, onClose }, username) => {
-  const [setEmail] = useState("");
+const ProfileModal = ({ isOpen, onClose, updateUsername }) => {
+  const [email, setEmail] = useState("");
   const [passwordResetQuestion, setPasswordResetQuestion] = useState("");
   const [passwordResetAnswer, setPasswordResetAnswer] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [timeZone, setTimeZone] = useState("");
-  const email = useLocation().state.username;
+  const location = useLocation();
+
+  // Initialize email with current username from location.state
+  React.useEffect(() => {
+    if (location.state?.username) {
+      setEmail(location.state.username);
+    }
+  }, [location.state]);
+
   // Validation function for email
   const validateEmail = (email) => {
     const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    
     return re.test(email);
   };
 
@@ -21,6 +28,14 @@ const ProfileModal = ({ isOpen, onClose }, username) => {
       alert("Please enter a valid email address.");
       return;
     }
+
+    // Update location.state.username through a passed-in handler
+    if (updateUsername) {
+      updateUsername(email);
+    } else {
+      console.warn("No updateUsername function provided!");
+    }
+
     // Handle save logic here (e.g., send data to backend)
     console.log({
       email,
@@ -40,7 +55,7 @@ const ProfileModal = ({ isOpen, onClose }, username) => {
     <div className="modal-overlay">
       <div className="modal-content">
         <h2>User Profile</h2>
-        
+
         <label>
           Email:
           <input 
@@ -50,7 +65,7 @@ const ProfileModal = ({ isOpen, onClose }, username) => {
             required
           />
         </label>
-        
+
         <label>
           Password Reset Question:
           <select 
@@ -65,7 +80,7 @@ const ProfileModal = ({ isOpen, onClose }, username) => {
             <option value="What city were you born in?">What city were you born in?</option>
           </select>
         </label>
-        
+
         <label>
           Answer:
           <input 
@@ -75,7 +90,7 @@ const ProfileModal = ({ isOpen, onClose }, username) => {
             required
           />
         </label>
-        
+
         <label>
           Date of Birth:
           <input 
@@ -85,7 +100,7 @@ const ProfileModal = ({ isOpen, onClose }, username) => {
             required
           />
         </label>
-        
+
         <label>
           Time Zone:
           <select 
@@ -123,9 +138,9 @@ const ProfileModal = ({ isOpen, onClose }, username) => {
         </label>
 
         <div className="modal-actions">
-            <button onClick={onClose}>Cancel</button>
-            &nbsp;
-            <button onClick={handleSave}>Save</button>               
+          <button onClick={onClose}>Cancel</button>
+          &nbsp;
+          <button onClick={handleSave}>Save</button>               
         </div>
       </div>
     </div>
