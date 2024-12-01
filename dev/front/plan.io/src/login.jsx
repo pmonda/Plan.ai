@@ -1,41 +1,15 @@
 import React, { useState, useEffect  } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
-import { setUserSession } from './service/AuthService';
-import axios from 'axios';
+import { setUserSession } from './service/AuthService.js';
 import bannerlogo from '../src/assets/Plan.IO__1_-removebg-preview.png';
-
-
-//TODO: remove
-let logins = {
-  'admin': 'test',
-  'pmonda': 'password',
-  'kpeddako': '12345',
-  'peda': '@!@!'
-};
-
+import axios from 'axios';
 
 export default function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate(); // Initialize useNavigate
-
-  
-  function registered(username) {
-    if (logins.hasOwnProperty(username)) { 
-      alert(username + ' is already registered');
-    } else {
-      navigate('/register', {state: {username: username}});
-    }
-}
-
-  const handleRegister = () => {
-    registered(username);
-  };
-  const forgotPassword = () => {
-    registered(username);
-  };
 
   useEffect(() => {
     document.title = 'Plan.io- Login'; 
@@ -104,9 +78,7 @@ export default function Login() {
           <input type="submit" value="Login"></input>
           <p>Don't have an account?</p>
           {errorMessage && <p className="error">{errorMessage}</p>}
-          <button onClick={handleRegister}>Register</button>                
           &nbsp;
-          <button onClick={forgotPassword}>Forgot Password</button>
       </form>
     </div>
   );

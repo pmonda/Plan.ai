@@ -4,7 +4,7 @@ import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import Login from './login.jsx';
 import Dashboard from './Dash.jsx'; // Create this component
 import Register from './Register.js';
-function App() {
+export const App = ()=>{
   return (
     <Router>
       <Routes>
@@ -16,4 +16,3 @@ function App() {
   );
 }
 
-export default App;
