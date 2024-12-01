@@ -1,0 +1,58 @@
+/* SettingsModal.css */
+.settings-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.settings-modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 500px;
+  width: 100%;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+}
+
+.settings-form label {
+  display: block;
+  margin-bottom: 10px;
+}
+
+/* Styles for work timer input */
+.work-timer-input,
+.break-timer-input {
+  width: 100%; /* Full width */
+  padding: 10px; /* Padding for better usability */
+  margin: 10px 0; /* Spacing */
+  border: 2px solid #007BFF; /* Blue outline */
+  border-radius: 4px; /* Rounded corners */
+  font-size: 16px; /* Increase font size */
+  box-sizing: border-box; /* Include padding and border in width/height */
+}
+
+/* Change border color on focus */
+.work-timer-input:focus,
+.break-timer-input:focus {
+  border-color: #0056b3; /* Darker blue on focus */
+  outline: none; /* Remove default outline */
+}
+
+.settings-modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.settings-modal-buttons button {
+  padding: 10px 15px;
+  cursor: pointer;
+}

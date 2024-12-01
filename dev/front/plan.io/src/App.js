@@ -1,12 +1,18 @@
-import logo from './logo.svg';
-import './App.css';
-import Login from './login';
-function App() {
+// App.js
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
+import Login from './login.jsx';
+import Dashboard from './Dash.jsx'; // Create this component
+import Register from './Register.js';
+export const App = ()=>{
   return (
-    <div className="App">
-      <Login/>
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Login />} />
+        <Route path="/dashboard" element={<Dashboard />} />
+        <Route path="/register" element={<Register />} />
+      </Routes>
+    </Router>
   );
 }
 
-export default App;
