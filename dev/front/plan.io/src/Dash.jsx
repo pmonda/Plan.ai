@@ -7,7 +7,6 @@
   import { useLocation } from 'react-router-dom';
   import pdfToText from 'react-pdftotext';
   import 'chartjs-adapter-date-fns';
-  import { Line } from 'react-chartjs-2';
   import TimelineChart from './TimelineChart';
   import AWS from "aws-sdk";
 
@@ -277,7 +276,7 @@ const extractTasks = () => {
 
     useEffect(() => {
       fetchTasksFromS3();
-    }, []);
+    }, [fetchTasksFromS3]);
     const sortedTasks = tasks.sort((a, b) => a.completed - b.completed);
 
     useEffect(() => {
@@ -419,7 +418,7 @@ const extractTasks = () => {
       }
     
       return () => clearInterval(timer);
-    }, [isRunning, timeLeft, handleTimerComplete]);
+    }, [workTime, isRunning, timeLeft, handleTimerComplete]);
     
     useEffect(() => {
       let breakTimer = null;
@@ -432,7 +431,7 @@ const extractTasks = () => {
       }
     
       return () => clearInterval(breakTimer);
-    }, [isBreakRunning, breakTimeLeft, handleBreakComplete]);
+    }, [breakTime, isBreakRunning, breakTimeLeft, handleBreakComplete]);
 
     
   const recordTimer = (endTime) => {
