@@ -51,8 +51,8 @@
         
     const s3 = new AWS.S3({
       region: "us-east-1", 
-      accessKeyId: S3_ACCESS_KEY,
-      secretAccessKey: S3_SECRET_ACCESS_KEY,
+      accessKeyId: 'S3_ACCESS_KEY',
+      secretAccessKey: 'S3_SECRET_ACCESS_KEY',
     });
 
     const BUCKET_NAME = "user-tasklistbucket-uvhkyj8y";

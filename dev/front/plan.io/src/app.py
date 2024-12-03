@@ -41,47 +41,67 @@ def process_text():
         if not text:
             return jsonify({'error': 'No text provided in the request'}), 400
 
-    # Prepare the chat request to the Ollama model with the text included in the prompt
-    prompt = f"""
-    Given the following assignment, please generate 5-6 detailed and actionable steps, along with an estimated time for each step, designed for a beginner-intermediate level student. Your guidance should be broken down into specific, relevant steps tailored to the assignment, rather than generalizing it into a single task. Avoid writing ANY code as this can cause trouble for the student, but ensure that each step is clear and can be followed logically. Please also do not include the answers in the description, only guide the user.
-    Disregard any terms that have negative connotation not directly related to the core functionality of the assignment.
+        # Construct a highly detailed and strict prompt
+        prompt = f"""
+        Please generate a **step-by-step guide** based on the following assignment description. Each step must be clear, specific, and actionable for a beginner-intermediate level student. These instructions should be specific enough to suggest frameworks or methods without giving away the answer, you are simply guiding the student to use particular steps to help them out. 
+        For example, instead of saying "write code", specify what they would use, how to use it, and what exactly to write without doing it for them. The generated steps must strictly adhere to the format below, with **no deviations**.
 
         Guidelines for Output:
         1. Start with the assignment name and due date (if provided).
         2. Include **5-6 actionable steps**, each clearly defining a single task. Avoid combining multiple tasks into one step.
         3. **Each step must follow this exact format:**
 
-    'Step Step Number : Task Name - Estimated Time in min'
-    - (One line description starting with a hyphen)
+           **Step [Step Number] : [Task Name] - [Estimated Time in min]**  
+            - [One actionable description starting with a hyphen. Please provide as much detail as deemed necessary.]
 
-    Follow this example:
-    Step 1 : Research the topic - 30 min
-    - Gather key resources and take notes on important aspects of the topic.
-    
-    Step 2 : 
-    Continue...
-    Make sure the format is strictly adhered to and does not deviate. Make absolutely certain that each step in the section begins with the word Step and then the formatting, as this is the highest priority for our users to extract their tasks. Each description must be exactly one line, start with a hyphen, and provide concise, actionable guidance for the student.
-    {text}
-    """
+        Example:
+        Step 1 : Research the topic - 30 min  
+        - Gather resources and identify important aspects of the topic for further understanding.
 
-    logging.debug(f"Generated prompt for Ollama model: {prompt}")
-    
-    try:
-        response = ollama.chat(model='llama3.2', messages=[
-            {
-                'role': 'user',
-                'content': prompt,
-            },
-        ])
-        logging.debug(f"Received response from Ollama model: {response}")
+        Step 2 : Prepare tools - 20 min  
+        - Ensure all necessary hardware and software components are ready for use.
+
+        Additional Guidelines:
+        - Maintain uniform formatting for every step.
+        - Ensure the description begins with a hyphen and does not exceed one sentence.
+        - Do not include any code or direct answers to the assignment.
+        - Avoid unnecessary generalizations or extraneous information that isn't directly relevant to the task.
+
+        Assignment: {text}
+
+        ### Output Format:
+        The output must consist only of:
+        1. Assignment name or number and due date at the top (if available). The due date must be in formats like "March 12, 2024" or "12/03/2024"
+        2. Steps written in the exact format described above.
         
-        # Extract the generated message from the response
-        generated_text = response['message']['content']
-        logging.debug(f"Extracted generated text: {generated_text}")
-        
+        DO NOT ask the user for further clarification. Do not continue the conversation. Work with the information presented and simply present your best estimate of what the steps may look like for that particular labs. If steps are not readily apparent, please make some to guide the user.
+        """
+
+        logging.debug(f"Generated prompt: {prompt}")
+
+        # Call OpenAI's GPT-4 API
+        response = openai.ChatCompletion.create(
+            model="gpt-4o",
+            messages=[
+                {"role": "user", "content": prompt}
+            ]
+        )
+
+        # Extract and format response content
+        generated_text = response['choices'][0]['message']['content']
+        logging.debug(f"Response from OpenAI: {generated_text}")
+
+        if not generated_text:
+            raise ValueError("No content returned from OpenAI.")
+
+        # Format text for bolding key terms
+        formatted_text = bold_key_terms(generated_text)
+
+        return jsonify({'modifiedText': formatted_text})
+
     except Exception as e:
         logging.error(f"Error: {e}")
         return jsonify({'error': 'Error processing the text'}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=5000)
+    app.run(port=5000)
