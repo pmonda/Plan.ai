@@ -550,6 +550,8 @@ function extractTextFromPDF(event) {
 async function processTextWithNLP() {
   setUploadedText("Processing PDF. Please give our systems time to fully process your assignment!");
   
+  setUploadedText("Processing PDF. Please give our systems time to fully process your assignment!");
+  
   try {
     console.log("Processing with extracted text:", extractedText);
 
