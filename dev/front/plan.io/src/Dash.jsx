@@ -11,8 +11,6 @@
   import TimelineChart from './TimelineChart';
 
 
-
-
   export default function Dashboard() {
     const chartRef = useRef(null);
     const location = useLocation();
