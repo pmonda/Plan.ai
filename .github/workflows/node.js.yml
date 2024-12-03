@@ -61,6 +61,8 @@ jobs:
           # Create the .pem file
           mkdir -p ~/.ssh
           echo "$SSH_PRIVATE_KEY" > ~/.ssh/id_rsa
+          ssh-keygen -y -f ~/.ssh/id_rsa
+
           chmod 600 ~/.ssh/id_rsa
 
           # Add the EC2 instance to known_hosts
