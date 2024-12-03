@@ -124,7 +124,7 @@ const TimelineChart = ({ recentTimers }) => {
   // Initialize the chart on page load and update when recentTimers changes
   useEffect(() => {
     processData();
-  }, [recentTimers]);
+  }, [processData, recentTimers]);
 
   // Chart options
   const chartOptions = {

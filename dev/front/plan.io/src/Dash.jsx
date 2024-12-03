@@ -61,21 +61,7 @@
       document.title = 'Plan.io- Dashboard'; 
     }, []);
 
-    const fetchTasksFromS3 = async () => {
-      try {
-        const response = await s3
-          .getObject({
-            Bucket: BUCKET_NAME,
-            Key: TASKS_FILE_KEY,
-          })
-          .promise();
     
-        const tasks = JSON.parse(response.Body.toString());
-        setTasks(tasks); // Update state with fetched tasks
-      } catch (error) {
-        console.error("Error fetching tasks from S3:", error);
-      }
-    };
     
     // Function to save tasks to S3
     const saveTasksToS3 = async (tasks) => {
@@ -275,8 +261,22 @@ const extractTasks = () => {
     };
 
     useEffect(() => {
-      fetchTasksFromS3();
-    }, [fetchTasksFromS3]);
+      const fetchTasksFromS3 = async () => {
+        try {
+          const response = await s3
+            .getObject({
+              Bucket: BUCKET_NAME,
+              Key: TASKS_FILE_KEY,
+            })
+            .promise();
+      
+          const tasks = JSON.parse(response.Body.toString());
+          setTasks(tasks); // Update state with fetched tasks
+        } catch (error) {
+          console.error("Error fetching tasks from S3:", error);
+        }
+      };
+    }, []);
     const sortedTasks = tasks.sort((a, b) => a.completed - b.completed);
 
     useEffect(() => {
