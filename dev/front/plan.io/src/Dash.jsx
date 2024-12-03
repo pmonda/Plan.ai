@@ -1,4 +1,4 @@
-  import React, { useState, useEffect, useCallback, useRef} from 'react';
+  import React, { useMemo, useState, useEffect, useCallback, useRef} from 'react';
   import './Dash.css'; // Import the updated CSS file
   import quotesDB from './quotesDB'; // Import the quotes
   import Modal from './Modal'; // Import the existing Modal component for logout
@@ -7,7 +7,6 @@
   import { useLocation } from 'react-router-dom';
   import pdfToText from 'react-pdftotext';
   import 'chartjs-adapter-date-fns';
-  import { Line } from 'react-chartjs-2';
   import TimelineChart from './TimelineChart';
   import AWS from "aws-sdk";
 
@@ -49,34 +48,36 @@
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false); // State for profile modal
     const [isExportDisabled, setIsExportDisabled] = useState(false); // State to disable export button
         
-    const s3 = new AWS.S3({
-      region: "us-east-1", 
-      accessKeyId: 'S3_ACCESS_KEY',
-      secretAccessKey: 'S3_SECRET_ACCESS_KEY',
-    });
+    const s3 = useMemo(() => {
+      return new AWS.S3({
+        region: "us-east-1",
+        accessKeyId: "S3_ACCESS_KEY",
+        secretAccessKey: "S3_SECRET_ACCESS_KEY",
+      });
+    }, []);
 
     const BUCKET_NAME = "user-tasklistbucket-uvhkyj8y";
     const TASKS_FILE_KEY = "tasks.json";
-
-    useEffect(() => {
-      document.title = 'Plan.io- Dashboard'; 
-    }, []);
-
-    const fetchTasksFromS3 = async () => {
+    
+    const fetchTasksFromS3 = useCallback(async () => {
       try {
         const response = await s3
           .getObject({
-            Bucket: BUCKET_NAME,
-            Key: TASKS_FILE_KEY,
+            Bucket: "user-tasklistbucket-uvhkyj8y",
+            Key: "tasks.json",
           })
           .promise();
-    
+
         const tasks = JSON.parse(response.Body.toString());
         setTasks(tasks); // Update state with fetched tasks
       } catch (error) {
         console.error("Error fetching tasks from S3:", error);
       }
-    };
+    }, [s3]);
+    useEffect(() => {
+      document.title = 'Plan.io- Dashboard'; 
+    }, []);
+
     
     // Function to save tasks to S3
     const saveTasksToS3 = async (tasks) => {
@@ -277,7 +278,8 @@ const extractTasks = () => {
 
     useEffect(() => {
       fetchTasksFromS3();
-    }, []);
+    }, [fetchTasksFromS3]);
+    
     const sortedTasks = tasks.sort((a, b) => a.completed - b.completed);
 
     useEffect(() => {
@@ -419,7 +421,7 @@ const extractTasks = () => {
       }
     
       return () => clearInterval(timer);
-    }, [isRunning, timeLeft, handleTimerComplete]);
+    }, [isRunning, timeLeft, handleTimerComplete, workTime]);
     
     useEffect(() => {
       let breakTimer = null;
@@ -432,7 +434,7 @@ const extractTasks = () => {
       }
     
       return () => clearInterval(breakTimer);
-    }, [isBreakRunning, breakTimeLeft, handleBreakComplete]);
+    }, [isBreakRunning, breakTimeLeft, handleBreakComplete, breakTime]);
 
     
   const recordTimer = (endTime) => {
