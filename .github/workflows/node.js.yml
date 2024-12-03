@@ -65,7 +65,7 @@ jobs:
           
  
           # Add the EC2 instance to known_hosts
-          ssh-keyscan -H ec2-3-212-238-155.compute-1.amazonaws.com >> ~/.ssh/known_hosts
+          # ssh-keyscan -H ec2-3-212-238-155.compute-1.amazonaws.com >> ~/.ssh/known_hosts
 
           # Copy the build folder to the EC2 instance
           scp -i ~/.ssh/id_rsa -r ./build/ ec2-user@ec2-3-212-238-155.compute-1.amazonaws.com:/var/www/html/plan.io/build
