@@ -9,6 +9,7 @@
   import 'chartjs-adapter-date-fns';
   import { Line } from 'react-chartjs-2';
   import TimelineChart from './TimelineChart';
+  import AWS from "aws-sdk";
 
 
   export default function Dashboard() {
@@ -48,10 +49,54 @@
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false); // State for profile modal
     const [isExportDisabled, setIsExportDisabled] = useState(false); // State to disable export button
         
+    const s3 = new AWS.S3({
+      region: "us-east-1", 
+      accessKeyId: S3_ACCESS_KEY,
+      secretAccessKey: S3_SECRET_ACCESS_KEY,
+    });
+
+    const BUCKET_NAME = "user-tasklistbucket-uvhkyj8y";
+    const TASKS_FILE_KEY = "tasks.json";
+
     useEffect(() => {
       document.title = 'Plan.io- Dashboard'; 
     }, []);
 
+    const fetchTasksFromS3 = async () => {
+      try {
+        const response = await s3
+          .getObject({
+            Bucket: BUCKET_NAME,
+            Key: TASKS_FILE_KEY,
+          })
+          .promise();
+    
+        const tasks = JSON.parse(response.Body.toString());
+        setTasks(tasks); // Update state with fetched tasks
+      } catch (error) {
+        console.error("Error fetching tasks from S3:", error);
+      }
+    };
+    
+    // Function to save tasks to S3
+    const saveTasksToS3 = async (tasks) => {
+      try {
+        const data = JSON.stringify(tasks);
+        await s3
+          .putObject({
+            Bucket: BUCKET_NAME,
+            Key: TASKS_FILE_KEY,
+            Body: data,
+            ContentType: "application/json",
+          })
+          .promise();
+    
+        console.log("Tasks successfully saved to S3.");
+      } catch (error) {
+        console.error("Error saving tasks to S3:", error);
+      }
+    };
+    
     const getDayOfWeek = () => {
       const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
       const currentDay = new Date().getDay();
@@ -70,9 +115,9 @@
       }
     };
 
-    const handleAddTask = () => {
+    const handleAddTask = async () => {
       if (newTask.trim() && description.trim() && dueDate.trim() && estimatedTime.trim()) {
-        setTasks([
+        const updatedTasks = [
           ...tasks,
           {
             task: newTask,
@@ -80,12 +125,15 @@
             dueDate: dueDate,         // Add dueDate to the task
             completed: false,
             estimatedTime: estimatedTime,
-            emoji: selectedEmoji
-          }
-        ]);
+            emoji: selectedEmoji,
+          },
+        ];
+        setTasks(updatedTasks);
+        await saveTasksToS3(updatedTasks); // Save updated tasks to S3
         resetTaskInput();
       }
     };
+    
 
     const addTasks = (newTasks) => {
       // Use the spread operator to append new tasks to the existing task list
@@ -221,11 +269,15 @@ const extractTasks = () => {
       setTasks(updatedTasks);
     };
 
-    const handleDeleteTask = (index) => {
-      const updatedTasks = tasks.filter((_, i) => i !== index);
+    const handleDeleteTask = async (taskIndex) => {
+      const updatedTasks = tasks.filter((_, index) => index !== taskIndex);
       setTasks(updatedTasks);
+      await saveTasksToS3(updatedTasks); // Save updated tasks to S3
     };
 
+    useEffect(() => {
+      fetchTasksFromS3();
+    }, []);
     const sortedTasks = tasks.sort((a, b) => a.completed - b.completed);
 
     useEffect(() => {
