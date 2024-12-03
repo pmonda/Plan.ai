@@ -2,9 +2,8 @@ import React, { useState, useEffect  } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 import { setUserSession } from './service/AuthService';
-import axios from 'axios';
 import bannerlogo from '../src/assets/Plan.IO__1_-removebg-preview.png';
-
+import axios from 'axios'
 
 //TODO: remove
 let logins = {

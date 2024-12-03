@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import './ProfileModal.css'; // Add your CSS styles
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const ProfileModal = ({ isOpen, onClose, updateUsername }) => {
   const [email, setEmail] = useState("");

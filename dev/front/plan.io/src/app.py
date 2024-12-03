@@ -43,7 +43,8 @@ def process_text():
 
         # Construct a highly detailed and strict prompt
         prompt = f"""
-        Please generate a **step-by-step guide** based on the following assignment description. Each step must be clear, specific, and actionable for a beginner-intermediate level student. The generated steps must strictly adhere to the format below, with **no deviations**.
+        Please generate a **step-by-step guide** based on the following assignment description. Each step must be clear, specific, and actionable for a beginner-intermediate level student. These instructions should be specific enough to suggest frameworks or methods without giving away the answer, you are simply guiding the student to use particular steps to help them out. 
+        For example, instead of saying "write code", specify what they would use, how to use it, and what exactly to write without doing it for them. The generated steps must strictly adhere to the format below, with **no deviations**.
 
         Guidelines for Output:
         1. Start with the assignment name and due date (if provided).
@@ -51,7 +52,7 @@ def process_text():
         3. **Each step must follow this exact format:**
 
            **Step [Step Number] : [Task Name] - [Estimated Time in min]**  
-            - [One concise, actionable description starting with a hyphen.]
+            - [One actionable description starting with a hyphen. Please provide as much detail as deemed necessary.]
 
         Example:
         Step 1 : Research the topic - 30 min  
@@ -70,7 +71,7 @@ def process_text():
 
         ### Output Format:
         The output must consist only of:
-        1. Assignment name or number and due date at the top (if available).
+        1. Assignment name or number and due date at the top (if available). The due date must be in formats like "March 12, 2024" or "12/03/2024"
         2. Steps written in the exact format described above.
         
         DO NOT ask the user for further clarification. Do not continue the conversation. Work with the information presented and simply present your best estimate of what the steps may look like for that particular labs. If steps are not readily apparent, please make some to guide the user.
@@ -103,4 +104,4 @@ def process_text():
         return jsonify({'error': 'Error processing the text'}), 500
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0',port=5000)
+    app.run(port=5000)

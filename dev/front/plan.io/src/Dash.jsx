@@ -1,13 +1,19 @@
-  import React, { useState, useEffect, useCallback} from 'react';
+  import React, { useState, useEffect, useCallback, useRef} from 'react';
   import './Dash.css'; // Import the updated CSS file
   import quotesDB from './quotesDB'; // Import the quotes
   import Modal from './Modal'; // Import the existing Modal component for logout
   import SettingsModal from './SettingsModal'; // Import the new Settings Modal
   import ProfileModal from './ProfileModal';
   import { useLocation } from 'react-router-dom';
-  import pdfToText from 'react-pdftotext'
+  import pdfToText from 'react-pdftotext';
+  import 'chartjs-adapter-date-fns';
+  import { Line } from 'react-chartjs-2';
+  import TimelineChart from './TimelineChart';
+  import AWS from "aws-sdk";
+
 
   export default function Dashboard() {
+    const chartRef = useRef(null);
     const location = useLocation();
     const [quote, setQuote] = useState("");
     const [author, setAuthor] = useState("");
@@ -27,6 +33,7 @@
     const [recentTimers, setRecentTimers] = useState([]); // To track recent timers
     const [startTime, setStartTime] = useState(null); // To store the start time
 
+    
     const [tasks, setTasks] = useState([]);
     const [newTask, setNewTask] = useState("");
     const [description, setDescription] = useState('');
@@ -41,17 +48,62 @@
 
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false); // State for profile modal
     const [isExportDisabled, setIsExportDisabled] = useState(false); // State to disable export button
+        
+    const s3 = new AWS.S3({
+      region: "us-east-1", 
+      accessKeyId: 'S3_ACCESS_KEY',
+      secretAccessKey: 'S3_SECRET_ACCESS_KEY',
+    });
+
+    const BUCKET_NAME = "user-tasklistbucket-uvhkyj8y";
+    const TASKS_FILE_KEY = "tasks.json";
 
     useEffect(() => {
       document.title = 'Plan.io- Dashboard'; 
     }, []);
 
+    const fetchTasksFromS3 = async () => {
+      try {
+        const response = await s3
+          .getObject({
+            Bucket: BUCKET_NAME,
+            Key: TASKS_FILE_KEY,
+          })
+          .promise();
+    
+        const tasks = JSON.parse(response.Body.toString());
+        setTasks(tasks); // Update state with fetched tasks
+      } catch (error) {
+        console.error("Error fetching tasks from S3:", error);
+      }
+    };
+    
+    // Function to save tasks to S3
+    const saveTasksToS3 = async (tasks) => {
+      try {
+        const data = JSON.stringify(tasks);
+        await s3
+          .putObject({
+            Bucket: BUCKET_NAME,
+            Key: TASKS_FILE_KEY,
+            Body: data,
+            ContentType: "application/json",
+          })
+          .promise();
+    
+        console.log("Tasks successfully saved to S3.");
+      } catch (error) {
+        console.error("Error saving tasks to S3:", error);
+      }
+    };
+    
     const getDayOfWeek = () => {
       const daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
       const currentDay = new Date().getDay();
       return daysOfWeek[currentDay];
     };
 
+    
     const clearTextAndFile = () => {
       // Clear the uploaded text
       setUploadedText("Please Upload a PDF to begin");
@@ -63,9 +115,9 @@
       }
     };
 
-    const handleAddTask = () => {
+    const handleAddTask = async () => {
       if (newTask.trim() && description.trim() && dueDate.trim() && estimatedTime.trim()) {
-        setTasks([
+        const updatedTasks = [
           ...tasks,
           {
             task: newTask,
@@ -73,12 +125,15 @@
             dueDate: dueDate,         // Add dueDate to the task
             completed: false,
             estimatedTime: estimatedTime,
-            emoji: selectedEmoji
-          }
-        ]);
+            emoji: selectedEmoji,
+          },
+        ];
+        setTasks(updatedTasks);
+        await saveTasksToS3(updatedTasks); // Save updated tasks to S3
         resetTaskInput();
       }
     };
+    
 
     const addTasks = (newTasks) => {
       // Use the spread operator to append new tasks to the existing task list
@@ -214,11 +269,15 @@ const extractTasks = () => {
       setTasks(updatedTasks);
     };
 
-    const handleDeleteTask = (index) => {
-      const updatedTasks = tasks.filter((_, i) => i !== index);
+    const handleDeleteTask = async (taskIndex) => {
+      const updatedTasks = tasks.filter((_, index) => index !== taskIndex);
       setTasks(updatedTasks);
+      await saveTasksToS3(updatedTasks); // Save updated tasks to S3
     };
 
+    useEffect(() => {
+      fetchTasksFromS3();
+    }, []);
     const sortedTasks = tasks.sort((a, b) => a.completed - b.completed);
 
     useEffect(() => {
@@ -256,133 +315,196 @@ const extractTasks = () => {
     const closeProfileClick = () => {
       setIsProfileModalOpen(false);
     };
-
-  const handleTimerComplete = useCallback((completedMinutes) => {
-
-  // const completedSession = workTime / 60;
-
-  setRecentTimers((prevTimers) => [
-    ...prevTimers,
-    {
-      startTime: startTime.toLocaleTimeString(),
-      endTime: new Date().toLocaleTimeString(),
-      duration: `${completedMinutes} minutes`,
-      type: 'work', // Specify that it was a work session
-    },
-  ]);
-
-  // If you're using a chart library, you can update the chart here
-  console.log(`Added ${completedMinutes} minutes to the chart.`);
-
-  alert("Work session completed! Timer reset.");
-
-  setIsRunning(false);
-  setTimeLeft(workTime);
-  }, [workTime, startTime]); // List dependencies used inside the function
-  
-  useEffect(() => {
-    let timer = null;
-    if (isRunning && timeLeft > 0) {
-      timer = setInterval(() => {
-        setTimeLeft(prevTime => prevTime - 1);
-      }, 1000);
-    } else if (timeLeft === 0 && isRunning) {
-      handleTimerComplete();
-    }
-  
-    return () => clearInterval(timer); // Cleanup timer
-  }, [isRunning, timeLeft, handleTimerComplete]);
-    // Break Timer Logic
-    useEffect(() => {
-      let breakTimer = null;
-      if (isBreakRunning && breakTimeLeft > 0) {
-        breakTimer = setInterval(() => {
-          setBreakTimeLeft(prevTime => prevTime - 1);
-        }, 1000);
-      } else if (breakTimeLeft === 0 && isBreakRunning) {
-        alert("Break session completed! Time to get back to work.");
-        setIsBreakRunning(false);
-      }
-
-      return () => clearInterval(breakTimer); // Cleanup break timer
-    }, [isBreakRunning, breakTimeLeft]);
-
-    const startTimer = () => {
-      if (!isRunning && !isBreakRunning) { // Only start if both timers are not running
-        setIsRunning(true);
-        setTimeLeft(workTime); // Reset to the custom work time when starting a new timer
-        setStartTime(new Date()); // Store the start time
-      }
-    };
-
-    const stopTimer = () => {
-      if (isRunning) {
-        const endTime = new Date();
-        recordTimer(endTime); // Pass the end time to the recordTimer function
-
-      }
-      setIsRunning(false);
-      setTimeLeft(workTime);
-    };
-
-    const startBreak = () => {
-      if (!isBreakRunning && !isRunning) { // Only start if break timer is not running and work timer is stopped
-        setIsBreakRunning(true);
-        setBreakTimeLeft(breakTime); // Reset to the custom break time when starting a new break
-        setStartTime(new Date()); // Store the break start time
-      }
-    };
-
-    const stopBreak = () => {
-      if (isBreakRunning) {
-        const endTime = new Date();
-        recordTimer(endTime); // Record the break session
-      }
-      setBreakTimeLeft(breakTime); // Reset to 5 minutes when stopping the break
-      setIsBreakRunning(false);
-    };
-
-    const clearAllTimers = () => {
-      setRecentTimers([]); // Set recent timers to an empty array
-    };
-
     const formatTime = (time) => {
       const minutes = Math.floor(time / 60);
       const seconds = time % 60;
       return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
     };
+    
+    // Handle work timer completion
+    const handleTimerComplete = useCallback(
+      (completedMinutes) => {
+        setRecentTimers((prevTimers) => [
+          ...prevTimers,
+          {
+            startTime: startTime.toISOString(),
+            endTime: new Date().toISOString(),
+            duration: completedMinutes, // Minutes as numeric value
+            type: 'work',
+          },
+        ]);
+        console.log(`Work session of ${completedMinutes} minutes recorded.`);
+        setIsRunning(false);
+        setTimeLeft(workTime);
+      },
+      [workTime, startTime]
+    );
+    
+    // Track break session completion
+    const handleBreakComplete = useCallback(
+      (completedMinutes) => {
+        setRecentTimers((prevTimers) => [
+          ...prevTimers,
+          {
+            startTime: startTime.toISOString(),
+            endTime: new Date().toISOString(),
+            duration: completedMinutes, // Minutes as numeric value
+            type: 'break',
+          },
+        ]);
+        console.log(`Break session of ${completedMinutes} minutes recorded.`);
+        setIsBreakRunning(false);
+        setBreakTimeLeft(breakTime);
+      },
+      [breakTime, startTime]
+    );
+    
+    // Update chart data with work and break sessions
+    const updateChartData = (recentTimers, chart) => {
+      const workSessions = recentTimers.filter(timer => timer.type === 'work');
+      const breakSessions = recentTimers.filter(timer => timer.type === 'break');
+    
+      // Prepare data points
+      const workTimes = workSessions.map(session => ({
+        x: new Date(session.startTime).getTime(), // Use timestamp for x-axis
+        y: parseInt(session.duration), // Duration in minutes
+      }));
+    
+      const breakTimes = breakSessions.map(session => ({
+        x: new Date(session.startTime).getTime(), // Use timestamp for x-axis
+        y: parseInt(session.duration), // Duration in minutes
+      }));
+    
+      // Update chart datasets
+      chart.data.datasets = [
+        {
+          label: 'Work Sessions',
+          data: workTimes,
+          borderColor: 'blue',
+          backgroundColor: 'blue',
+          fill: false,
+          tension: 0.4, // Add some smoothness to the lines
+        },
+        {
+          label: 'Break Sessions',
+          data: breakTimes,
+          borderColor: 'orange',
+          backgroundColor: 'orange',
+          fill: false,
+          tension: 0.4, // Add some smoothness to the lines
+        },
+      ];
+    
+      // Update the chart
+      chart.update();
+    };
+    
+    
+    useEffect(() => {
+      const chart = chartRef.current?.chart;
+      if (chart) {
+        updateChartData(recentTimers, chart);
+      }
+    }, [recentTimers]); // Update chart whenever recentTimers changes
+    
+    // Timer and break logic
+    useEffect(() => {
+      let timer = null;
+      if (isRunning && timeLeft > 0) {
+        timer = setInterval(() => {
+          setTimeLeft((prevTime) => prevTime - 1);
+        }, 1000);
+      } else if (timeLeft === 0 && isRunning) {
+        handleTimerComplete(workTime / 60); // Pass minutes
+      }
+    
+      return () => clearInterval(timer);
+    }, [isRunning, timeLeft, handleTimerComplete]);
+    
+    useEffect(() => {
+      let breakTimer = null;
+      if (isBreakRunning && breakTimeLeft > 0) {
+        breakTimer = setInterval(() => {
+          setBreakTimeLeft((prevTime) => prevTime - 1);
+        }, 1000);
+      } else if (breakTimeLeft === 0 && isBreakRunning) {
+        handleBreakComplete(breakTime / 60); // Pass minutes
+      }
+    
+      return () => clearInterval(breakTimer);
+    }, [isBreakRunning, breakTimeLeft, handleBreakComplete]);
 
     
+  const recordTimer = (endTime) => {
+    const duration = Math.floor((endTime - startTime) / 1000 / 60); // Calculate duration in minutes
+    const timerType = isBreakRunning ? "break" : "work"; // Determine if it's a work or break session
+  
+    // Store start and end times as ISO strings for accurate timestamp storage
+    setRecentTimers((prevTimers) => [
+      ...prevTimers,
+      {
+        startTime: startTime.toISOString(), // Store start time as ISO string
+        endTime: endTime.toISOString(),     // Store end time as ISO string
+        duration, // Numeric value for chart compatibility
+        type: timerType, // "work" or "break"
+      },
+    ]);
+  
+    console.log(`Recorded a ${timerType} session: ${duration} minutes`);
+  };
+  
+    
 
-    // Record the timer session with actual duration
-    const recordTimer = (endTime) => {
-      const duration = Math.floor((endTime - startTime) / 1000 / 60); // Calculate duration in minutes
-      const timerType = isBreakRunning ? "break" : "work"; // Determine if it's a work or break session
-      setRecentTimers((prevTimers) => [
-        ...prevTimers,
-        {
-          startTime: startTime.toLocaleTimeString(),
-          endTime: endTime.toLocaleTimeString(),
-          duration: `${duration} minutes`,
-          type: timerType, // Record the type of session
-        },
-      ]);
+    // Timer control functions
+    const startTimer = () => {
+      setIsRunning(true);
+      setTimeLeft(workTime); // Reset to work time
+      setStartTime(new Date());
     };
 
-    const updateTimers = (newWorkTime, newBreakTime) => {
-      setWorkTime(newWorkTime);
-      setBreakTime(newBreakTime);
-      setTimeLeft(newWorkTime); // Update the displayed work time
-      setBreakTimeLeft(newBreakTime); // Update the displayed break time
-    };
-    const handleEstimatedTimeClick = (estimatedTime) => {
-      const minutes = parseInt(estimatedTime, 10); // Convert the estimated time to an integer
-      if (!isNaN(minutes)) {
-        setWorkTime(minutes * 60); // Set the work time in seconds
-        setTimeLeft(minutes * 60); // Set the timer display in seconds
+    const stopTimer = () => {
+      if (isRunning) {
+        setIsRunning(false);
+        recordTimer(new Date()); // Pass the current end time
       }
     };
     
+    
+    const startBreak = () => {
+      if (!isBreakRunning && !isRunning) {
+        setIsBreakRunning(true);
+        setBreakTimeLeft(breakTime); // Reset break timer
+        setStartTime(new Date());
+      }
+    };
+    
+    const stopBreak = () => {
+      if (isBreakRunning) {
+        handleBreakComplete(Math.floor((new Date() - startTime) / 1000 / 60)); // Convert to minutes
+      }
+      setIsBreakRunning(false);
+    };
+    
+    const clearAllTimers = () => {
+      setRecentTimers([]);
+    };
+    
+    const handleEstimatedTimeClick = (estimatedTime) => {
+      const minutes = parseInt(estimatedTime, 10);
+      if (!isNaN(minutes)) {
+        setWorkTime(minutes * 60); // Update work time
+        setTimeLeft(minutes * 60);
+      }
+    };
+    
+    const updateTimers = (newWorkTime, newBreakTime) => {
+      setWorkTime(newWorkTime);
+      setBreakTime(newBreakTime);
+      setTimeLeft(newWorkTime);
+      setBreakTimeLeft(newBreakTime);
+    };
+    
+
 
 function extractTextFromPDF(event) {
   setIsExportDisabled(false);
@@ -428,12 +550,14 @@ function extractTextFromPDF(event) {
 async function processTextWithNLP() {
   setUploadedText("Processing PDF. Please give our systems time to fully process your assignment!");
   
+  setUploadedText("Processing PDF. Please give our systems time to fully process your assignment!");
+  
   try {
     console.log("Processing with extracted text:", extractedText);
 
     // Update fetch URL to point to Flask backend running on port 5000
     
-    const response = await fetch('http://3.93.21.46:5000/process-text', {
+    const response = await fetch('http://3.212.238.155:5000/process-text', {
           method: 'POST',
           headers: {
               'Content-Type': 'application/json'
@@ -525,8 +649,8 @@ async function processTextWithNLP() {
                           {recentTimers.map((timer, index) => (
                               <tr key={index}>
                                   <td>{timer.type === "work" ? "⏳" : "☕"}</td>
-                                  <td>{timer.startTime}</td>
-                                  <td>{timer.endTime}</td>
+                                  <td>{timer.startTime.slice(11, 19)}</td>
+                                  <td>{timer.endTime.slice(11, 19)}</td>
                                   <td>{timer.duration}</td>
                               </tr>
                           ))}
@@ -627,6 +751,15 @@ async function processTextWithNLP() {
               </table>
             </div>
           </section>
+          <section className="dashboard-section">
+            <div className="session-log">
+              <h2>Session Log</h2>
+              <div className="chart-section">
+                <TimelineChart recentTimers={recentTimers} />
+              </div>
+            </div>
+          </section>
+
           <section className="dashboard-section pdf-text-section">
             <h2>Assignment Guide</h2>
             
