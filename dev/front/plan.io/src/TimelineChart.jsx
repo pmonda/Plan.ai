@@ -42,11 +42,7 @@ const TimelineChart = ({ recentTimers }) => {
   };
 
   // Process the session data for the chart
-  const processData = () => {
-    if (!recentTimers || recentTimers.length === 0) {
-      console.warn("No timers found");
-      return;
-    }
+  
 
     // Find the earliest session start time
     const startTimes = recentTimers.map((timer) => new Date(timer.startTime));
@@ -123,8 +119,15 @@ const TimelineChart = ({ recentTimers }) => {
 
   // Initialize the chart on page load and update when recentTimers changes
   useEffect(() => {
+    const processData = () => {
+      if (!recentTimers || recentTimers.length === 0) {
+        console.warn("No timers found");
+        return;
+      };
+    };
+
     processData();
-  }, [processData, recentTimers]);
+  }, [recentTimers]);
 
   // Chart options
   const chartOptions = {
