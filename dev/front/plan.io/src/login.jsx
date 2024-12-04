@@ -45,6 +45,7 @@ export default function Login() {
     setErrorMessage(null);
     const requestConfig = {
       headers: {
+        //need to add a comment to push code to ensure that api key is available
         'x-api-key': process.env.REACT_APP_API_KEY
       }
     }
