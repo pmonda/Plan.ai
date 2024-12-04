@@ -53,14 +53,14 @@ jobs:
       #     npm ci
       #     npm run build --if-present
       #     npm test
-      - name: Build
-        run: |
-          cd plan.io/dev/front/plan.io
-          npm run build
-      # Deploy the build to the EC2 instance
       - name: Pull Latest Code
         run: |
           git pull origin main
+      
+      - name: Build
+        run: npm run build
+      # Deploy the build to the EC2 instance
+      
       - name: Deploy to EC2
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
