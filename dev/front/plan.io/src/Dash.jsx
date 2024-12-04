@@ -253,6 +253,7 @@ const extractTasks = () => {
       completed: false,
     };
   });
+  saveTasksToS3(extractedTasks);
 
   if (extractedTasks.length) {
     addTasks(extractedTasks); // Add extracted tasks to the task list
@@ -366,9 +367,6 @@ const extractTasks = () => {
       setIsSettingsModalOpen(true);
     };
 
-    const handleProfileClick = () => {
-      setIsProfileModalOpen(true);
-    };
 
     const closeSettingsModal = () => {
       setIsSettingsModalOpen(false);
@@ -496,26 +494,31 @@ const extractTasks = () => {
       return () => clearInterval(breakTimer);
     }, [isBreakRunning, breakTimeLeft, handleBreakComplete, breakTime]);
 
+    const recordTimer = (endTime) => {
+      // Function to convert a given Date object to EST (Eastern Standard Time)
+      const convertToEST = (date) => {
+        const localDate = new Date(date);
+        return new Date(localDate.toLocaleString("en-US", { timeZone: "America/New_York" }));
+      };
     
-  const recordTimer = (endTime) => {
-    const duration = Math.floor((endTime - startTime) / 1000 / 60); // Calculate duration in minutes
-    const timerType = isBreakRunning ? "break" : "work"; // Determine if it's a work or break session
-  
-    // Store start and end times as ISO strings for accurate timestamp storage
-    setRecentTimers((prevTimers) => [
-      ...prevTimers,
-      {
-        startTime: startTime.toISOString(), // Store start time as ISO string
-        endTime: endTime.toISOString(),     // Store end time as ISO string
-        duration, // Numeric value for chart compatibility
-        type: timerType, // "work" or "break"
-      },
-    ]);
-  
-    console.log(`Recorded a ${timerType} session: ${duration} minutes`);
-  };
-  
+      const duration = ((new Date() - startTime) / 1000 / 60).toFixed(2); // Calculate duration in minutes
+      const timerType = isBreakRunning ? "break" : "work"; // Determine if it's a work or break session
     
+      // Convert startTime and endTime to EST
+      const estStartTime = convertToEST(startTime);
+      const estEndTime = convertToEST(endTime);
+    
+      // Store start and end times as ISO strings for accurate timestamp storage
+      setRecentTimers((prevTimers) => [
+        ...prevTimers,
+        {
+          startTime: estStartTime.toISOString(), // Store start time as ISO string in EST
+          endTime: estEndTime.toISOString(),     // Store end time as ISO string in EST
+          duration, // Numeric value for chart compatibility
+          type: timerType, // "work" or "break"
+        },
+      ]);
+    }
 
     // Timer control functions
     const startTimer = () => {
@@ -539,13 +542,14 @@ const extractTasks = () => {
         setStartTime(new Date());
       }
     };
-    
+
     const stopBreak = () => {
       if (isBreakRunning) {
-        handleBreakComplete(Math.floor((new Date() - startTime) / 1000 / 60)); // Convert to minutes
+        handleBreakComplete(((new Date() - startTime) / 1000 / 60).toFixed(2)); // Convert to minutes with 2 decimal places
       }
       setIsBreakRunning(false);
     };
+
     
     const clearAllTimers = () => {
       setRecentTimers([]);
@@ -647,7 +651,7 @@ async function processTextWithNLP() {
         <aside className="dashboard-sidebar">
           <h3>&lt;Plan.io&gt;</h3>
           <p>
-            Hello, <strong>{username}</strong>! <br /><br />Let's make this <strong>{getDayOfWeek()}</strong> productive.
+            Hello, <strong>{username.split('@')[0]}</strong>! <br /><br />Let's make this <strong>{getDayOfWeek()}</strong> productive.
           </p>
           <p className="motivational-quote">
             "{quote}" <br />– {author}
@@ -658,8 +662,7 @@ async function processTextWithNLP() {
   
           </div>
           <ul>
-            <li><div onClick={handleProfileClick}>Profile</div></li> {/* Profile link */}
-            <li><div onClick={handleSettingsClick}>Settings</div></li> {/* Trigger settings modal */}
+            <li><button onClick={handleSettingsClick}>Timer Settings</button></li> {/* Trigger settings modal */}
             <li><button onClick={handleLogout}>Logout</button></li>
           </ul>
         </aside>
