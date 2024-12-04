@@ -18,7 +18,7 @@
     "concurrently": "^9.1.0",
     "core-js": "^3.39.0",
     "dot-env": "^0.0.1",
-    "dotenv": "^16.4.5",
+    "dotenv": "^16.4.7",
     "express": "^4.21.1",
     "mdb-react-ui-kit": "^8.0.0",
     "pdfjs-dist": "^4.8.69",

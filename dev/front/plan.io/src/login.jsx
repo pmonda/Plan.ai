@@ -7,10 +7,6 @@ import axios from 'axios'
 
 //TODO: remove
 let logins = {
-  'admin': 'test',
-  'pmonda': 'password',
-  'kpeddako': '12345',
-  'peda': '@!@!'
 };
 
 
@@ -30,9 +26,6 @@ export default function Login() {
 }
 
   const handleRegister = () => {
-    registered(username);
-  };
-  const forgotPassword = () => {
     registered(username);
   };
 
@@ -105,7 +98,6 @@ export default function Login() {
           {errorMessage && <p className="error">{errorMessage}</p>}
           <button onClick={handleRegister}>Register</button>                
           &nbsp;
-          <button onClick={forgotPassword}>Forgot Password</button>
       </form>
     </div>
   );
