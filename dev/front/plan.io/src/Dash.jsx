@@ -10,8 +10,8 @@
   import TimelineChart from './TimelineChart';
   import AWS from "aws-sdk";
 
-
   export default function Dashboard() {
+    
     const chartRef = useRef(null);
     const location = useLocation();
     const [quote, setQuote] = useState("");
@@ -31,7 +31,6 @@
     const [isBreakRunning, setIsBreakRunning] = useState(false); // State for break timer
     const [recentTimers, setRecentTimers] = useState([]); // To track recent timers
     const [startTime, setStartTime] = useState(null); // To store the start time
-
     
     const [tasks, setTasks] = useState([]);
     const [newTask, setNewTask] = useState("");
@@ -47,33 +46,70 @@
 
     const [isProfileModalOpen, setIsProfileModalOpen] = useState(false); // State for profile modal
     const [isExportDisabled, setIsExportDisabled] = useState(false); // State to disable export button
-        
+    const [bucketName, setBucketName] = useState(null);
+    const REACT_APP_S3_ACCESS_KEY =process.env.REACT_APP_S3_ACCESS_KEY;
+    const REACT_APP_S3_SECRET_ACCESS_KEY =process.env.REACT_APP_S3_SECRET_ACCESS_KEY;
+    const REACT_APP_DB_ACCESS_KEY =process.env.REACT_APP_DB_ACCESS_KEY;
+    const REACT_APP_DB_SECRET_ACCESS_KEY =process.env.REACT_APP_DB_SECRET_ACCESS_KEY;
+
     const s3 = useMemo(() => {
       return new AWS.S3({
         region: "us-east-1",
-        accessKeyId: "S3_ACCESS_KEY",
-        secretAccessKey: "S3_SECRET_ACCESS_KEY",
+        accessKeyId: REACT_APP_S3_ACCESS_KEY,
+        secretAccessKey: REACT_APP_S3_SECRET_ACCESS_KEY,
       });
-    }, []);
+    }, [REACT_APP_S3_ACCESS_KEY, REACT_APP_S3_SECRET_ACCESS_KEY]);
 
-    const BUCKET_NAME = "user-tasklistbucket-uvhkyj8y";
+    const dynamodb = useMemo(() => {
+      return new AWS.DynamoDB.DocumentClient({
+        region: "us-east-1",
+        accessKeyId: REACT_APP_DB_ACCESS_KEY,
+        secretAccessKey: REACT_APP_DB_SECRET_ACCESS_KEY,
+      });
+    }, [REACT_APP_DB_ACCESS_KEY, REACT_APP_DB_SECRET_ACCESS_KEY]);
+  
     const TASKS_FILE_KEY = "tasks.json";
-    
+
+    const fetchBucketName = useCallback(async (username) => {
+      const params = {
+        TableName: "planio-users", // Your DynamoDB table name
+        Key: { username: username }, // Make sure 'username' matches your table's partition key
+      };
+  
+      try {
+        const data = await dynamodb.get(params).promise();
+        if (data.Item && data.Item["task-list-bucket-id"]) {
+          setBucketName(data.Item["task-list-bucket-id"]); // Assuming 'bucketId' is the attribute in DynamoDB that stores the bucket name
+        } else {
+          console.error("Bucket ID not found for the user", username);
+        }
+      } catch (error) {
+        console.error("Error fetching bucket name from DynamoDB:", error);
+      }
+    }, [dynamodb]);
+  
+    // Fetch tasks from the S3 bucket once the bucket name is set
     const fetchTasksFromS3 = useCallback(async () => {
+      if (!bucketName) {
+        console.error("Bucket name is not set");
+        return;
+      }
+  
       try {
         const response = await s3
           .getObject({
-            Bucket: "user-tasklistbucket-uvhkyj8y",
-            Key: "tasks.json",
+            Bucket: bucketName,
+            Key: TASKS_FILE_KEY,
           })
           .promise();
-
+  
         const tasks = JSON.parse(response.Body.toString());
-        setTasks(tasks); // Update state with fetched tasks
+        setTasks(tasks);
       } catch (error) {
         console.error("Error fetching tasks from S3:", error);
       }
-    }, [s3]);
+    }, [s3, bucketName]);
+
     useEffect(() => {
       document.title = 'Plan.io- Dashboard'; 
     }, []);
@@ -85,7 +121,7 @@
         const data = JSON.stringify(tasks);
         await s3
           .putObject({
-            Bucket: BUCKET_NAME,
+            Bucket: bucketName,
             Key: TASKS_FILE_KEY,
             Body: data,
             ContentType: "application/json",
@@ -239,8 +275,7 @@ const extractTasks = () => {
       setEditIndex(index);
     };
 
-
-    const handleUpdateTask = () => {
+    const handleUpdateTask = useCallback(async () => {
       const updatedTasks = [...tasks];
       updatedTasks[editIndex] = {
         ...updatedTasks[editIndex],
@@ -248,11 +283,30 @@ const extractTasks = () => {
         description: description, // Update description
         dueDate: dueDate,         // Update dueDate
         emoji: selectedEmoji,
-        estimatedTime: estimatedTime
+        estimatedTime: estimatedTime,
       };
-      setTasks(updatedTasks);
-      resetTaskInput();
-    };
+      
+      setTasks(updatedTasks);  // Update local task state
+      
+      try {
+        // Upload the updated tasks to S3
+        const params = {
+          Bucket: bucketName,
+          Key: TASKS_FILE_KEY,
+          Body: JSON.stringify(updatedTasks), // Convert the updated tasks list to a JSON string
+          ContentType: "application/json"      // Set the content type to JSON
+        };
+        
+        await s3.putObject(params).promise();
+        console.log("Tasks updated successfully in S3!");
+    
+        // Optionally reset inputs after updating
+        resetTaskInput();
+      } catch (error) {
+        console.error("Error updating tasks in S3:", error);
+      }
+    }, [tasks, editIndex, newTask, description, dueDate, selectedEmoji, estimatedTime, s3, bucketName]);
+    
 
     const resetTaskInput = () => {
       setNewTask("");
@@ -277,8 +331,14 @@ const extractTasks = () => {
     };
 
     useEffect(() => {
-      fetchTasksFromS3();
-    }, [fetchTasksFromS3]);
+      fetchBucketName(username);
+    }, [fetchBucketName, username]);
+  
+    useEffect(() => {
+      if (bucketName) {
+        fetchTasksFromS3();
+      }
+    }, [bucketName, fetchTasksFromS3]);
     
     const sortedTasks = tasks.sort((a, b) => a.completed - b.completed);
 
