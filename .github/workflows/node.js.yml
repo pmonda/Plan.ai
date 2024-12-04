@@ -70,7 +70,7 @@ jobs:
           ssh-keyscan -H ec2-3-212-238-155.compute-1.amazonaws.com >> ~/.ssh/known_hosts
 
           # Copy the build folder to the EC2 instance
-          scp -v -r -i ~/.ssh/id_rsa ./build/ ubuntu@ec2-3-212-238-155.compute-1.amazonaws.com:/var/www/html/plan.io/builds/build
+          scp -v -r -i ~/.ssh/id_rsa ./build/ ubuntu@ec2-3-212-238-155.compute-1.amazonaws.com:/var/www/html/plan.io/build
 
           # Restart the server
           ssh -i ~/.ssh/id_rsa ubuntu@ec2-3-212-238-155.compute-1.amazonaws.com "sudo systemctl restart nginx"
