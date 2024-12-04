@@ -41,65 +41,59 @@ const TimelineChart = ({ recentTimers }) => {
     return labels;
   };
 
-  // Process the session data for the chart
+  // Helper function to convert a given date to EST
+  const convertToEST = (date) => {
+    const localDate = new Date(date);
+    return new Date(localDate.toLocaleString("en-US", { timeZone: "America/New_York" }));
+  };
 
-  // Initialize the chart on page load and update when recentTimers changes
+  // Process the session data for the chart
   useEffect(() => {
     const processData = () => {
       if (!recentTimers || recentTimers.length === 0) {
         console.warn("No timers found");
         return;
       }
-  
-      // Find the earliest session start time
-      const startTimes = recentTimers.map((timer) => new Date(timer.startTime));
+
+      // Convert all times to EST
+      const startTimes = recentTimers.map((timer) => convertToEST(timer.startTime));
       const firstStartTime = new Date(Math.min(...startTimes));
       const startHour = firstStartTime.getHours();
-  
+
       // Generate labels for the x-axis
       const labels = generateLabels(startHour);
-  
+
       // Prepare session data with default values for all hours
       const workData = new Array(24).fill(0); // Default all hours to 0
       const breakData = new Array(24).fill(0); // Default all hours to 0
-  
-      // Prepare lines for each session
-      const workLines = [];
-      const breakLines = [];
-  
+
+      // Loop through each timer and accumulate the durations by hour
       recentTimers.forEach((timer) => {
-        const startTime = new Date(timer.startTime);
+        const startTime = convertToEST(timer.startTime); // Convert start time to EST
         if (isNaN(startTime.getTime())) {
           console.warn("Invalid startTime:", timer.startTime);
           return;
         }
-  
-        const hour = startTime.getHours();
-        const endTime = new Date(startTime.getTime() + timer.duration * 60000); // Calculate end time in minutes
+
+        const duration = timer.duration || 0;
+        const startHour = startTime.getHours();
+        const endTime = new Date(startTime.getTime() + duration * 60000); // Calculate end time in EST
         const endHour = endTime.getHours();
-  
-        // Handle work session
+
+        // Add the session's duration to all hours it spans
         if (timer.type === "work") {
-          workData[(hour - startHour + 24) % 24] += timer.duration || 0; // Add duration to the correct hour
-          workLines.push({
-            x1: hour,
-            y1: timer.duration,
-            x2: endHour,
-            y2: 0, // This will draw a line from the start hour to the end hour
-            label: "Work",
-          });
+          for (let i = startHour; i <= endHour; i++) {
+            const hourIndex = (i + 24) % 24 - 15; // Wrap the index around the 24-hour format
+            workData[hourIndex] += duration / (endHour - startHour + 1); // Distribute duration evenly across all hours
+          }
         } else if (timer.type === "break") {
-          breakData[(hour - startHour + 24) % 24] += timer.duration || 0; // Add duration to the correct hour
-          breakLines.push({
-            x1: hour,
-            y1: timer.duration,
-            x2: endHour,
-            y2: 0, // This will draw a line from the start hour to the end hour
-            label: "Break",
-          });
+          for (let i = startHour; i <= endHour; i++) {
+            const hourIndex = (i + 24) % 24- 15; // Wrap the index around the 24-hour format
+            breakData[hourIndex] += duration / (endHour - startHour + 1); // Distribute duration evenly across all hours
+          }
         }
       });
-  
+
       // Update chart data with both work and break session lines
       setChartData({
         labels,
@@ -125,7 +119,7 @@ const TimelineChart = ({ recentTimers }) => {
     };
 
     processData();
-  }, [recentTimers]);  
+  }, [recentTimers]);
 
   // Chart options
   const chartOptions = {
@@ -145,7 +139,7 @@ const TimelineChart = ({ recentTimers }) => {
         type: "category",
         title: {
           display: true,
-          text: "Time of Day",
+          text: "Time of Day (EST)",
         },
       },
       y: {
@@ -167,4 +161,5 @@ const TimelineChart = ({ recentTimers }) => {
     </div>
   );
 };
+
 export default TimelineChart;
