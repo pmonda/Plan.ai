@@ -167,5 +167,4 @@ const TimelineChart = ({ recentTimers }) => {
     </div>
   );
 };
-
 export default TimelineChart;
