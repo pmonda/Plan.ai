@@ -56,6 +56,9 @@ jobs:
       - name: Build
         run: npm run build
       # Deploy the build to the EC2 instance
+      - name: Pull Latest Code
+        run: |
+          git pull origin main
       - name: Deploy to EC2
         env:
           SSH_PRIVATE_KEY: ${{ secrets.EC2_PRIVATE_KEY }}
@@ -70,8 +73,7 @@ jobs:
           # Add the EC2 instance to known_hosts
           ssh-keyscan -H ec2-3-212-238-155.compute-1.amazonaws.com >> ~/.ssh/known_hosts
 
-          #create build folder
-          ssh -i ~/.ssh/planio-key.pem ubuntu@ec2-3-212-238-155.compute-1.amazonaws.com "touch /var/www/html/plan.io/build"
+          ssh -i ~/.ssh/planio-key.pem ubuntu@ec2-3-212-238-155.compute-1.amazonaws.com "rm -rf /var/www/html/plan.io/build" "touch /var/www/html/plan.io/build"
 
           # Copy the build folder to the EC2 instance
           scp -v -r -i ~/.ssh/planio-key.pem ./build/ ubuntu@ec2-3-212-238-155.compute-1.amazonaws.com:/var/www/html/plan.io/build
