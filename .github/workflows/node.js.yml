@@ -76,7 +76,7 @@ jobs:
           # Add the EC2 instance to known_hosts
           ssh-keyscan -H ec2-3-212-238-155.compute-1.amazonaws.com >> ~/.ssh/known_hosts
           scp -i ~/.ssh/planio-key.pem -r ./build/ ubuntu@ec2-3-212-238-155.compute-1.amazonaws.com:/tmp/build
-          ssh -i ~/.ssh/planio-key.pem ubuntu@ec2-3-212-238-155.compute-1.amazonaws.com "sudo rm -rf /var/www/html/plan.io/build/build mv /tmp/build /var/www/html/plan.io/build/build && sudo systemctl restart nginx"
+          ssh -i ~/.ssh/planio-key.pem ubuntu@ec2-3-212-238-155.compute-1.amazonaws.com "sudo cp /tmp/build /var/www/html/plan.io/build/build && sudo systemctl restart nginx"
           
           # ssh -i ~/.ssh/planio-key.pem ubuntu@ec2-3-212-238-155.compute-1.amazonaws.com "sudo rm -rf /var/www/html/plan.io/build" "touch /var/www/html/plan.io/build"
 
