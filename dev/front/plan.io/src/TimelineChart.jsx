@@ -83,12 +83,12 @@ const TimelineChart = ({ recentTimers }) => {
         // Add the session's duration to all hours it spans
         if (timer.type === "work") {
           for (let i = startHour; i <= endHour; i++) {
-            const hourIndex = (i + 24) % 24 - 15; // Wrap the index around the 24-hour format
+            const hourIndex = (i + 24) % 24 -12; // Wrap the index around the 24-hour format
             workData[hourIndex] += duration / (endHour - startHour + 1); // Distribute duration evenly across all hours
           }
         } else if (timer.type === "break") {
           for (let i = startHour; i <= endHour; i++) {
-            const hourIndex = (i + 24) % 24- 15; // Wrap the index around the 24-hour format
+            const hourIndex = (i + 24) % 24 - 12; // Wrap the index around the 24-hour format
             breakData[hourIndex] += duration / (endHour - startHour + 1); // Distribute duration evenly across all hours
           }
         }
